@@ -50,6 +50,7 @@ const useNotesStore = create<NotesState>()((set) => ({
   updateNote: (id, updatedNote) =>
     set((state) => ({
       ...state,
+      allIds: [id, ...without(state.allIds, id)],
       byId: { ...state.byId, [id]: updatedNote },
     })),
   deleteNote: (id) =>

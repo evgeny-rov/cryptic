@@ -9,15 +9,15 @@ const NoteListItem = ({ id }: { id: NoteId }) => {
   const notePreviewText = note.data.trim().split(/\r?\n/)[0];
 
   return (
-    <li className="h-10">
+    <li className="h-9">
       <button
         onClick={() => selectNote(id)}
-        className={`w-full h-full px-4 flex items-center gap-4 hover:bg-[#252528] ${
-          isSelected ? 'bg-[#252528]' : ''
+        className={`w-full h-full px-3 flex items-center gap-4 rounded-md hover:opacity-100 ${
+          isSelected ? 'bg-[#202023]' : 'opacity-50'
         }`}
         type="button"
       >
-        <div className="w-[5px] h-[5px] bg-white rounded-[50%]" />
+        <span className="text-xl">{'•'}</span>
         <span className="w-44 text-left capitalize overflow-hidden whitespace-nowrap text-ellipsis">
           {notePreviewText || 'Empty note'}
         </span>
@@ -30,7 +30,7 @@ export default function NotesList() {
   const notesIds = useNotesStore((state) => state.allIds);
 
   return (
-    <div>
+    <div className="bg-[#202023] p-2 rounded-md overflow-y-auto border-2 border-zinc-800">
       <ul>
         {notesIds.map((id) => (
           <NoteListItem key={id} id={id} />

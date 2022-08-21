@@ -4,12 +4,10 @@ import Editor from './editor';
 
 export default function Notes() {
   return (
-    <main className="relative w-[65rem] h-[43rem] bg-[#202023] grid grid-cols-[15rem_1fr] rounded-md overflow-hidden">
+    <main className="relative w-[65rem] h-[43rem] grid grid-cols-[15rem_2rem_1fr] gap-2">
       <NotesList />
-      <div className="w-full h-full grid grid-rows-[1.5rem_1fr] bg-[#252528] rounded-md overflow-hidden">
-        <Toolbar />
-        <Editor />
-      </div>
+      <Toolbar />
+      <Editor />
     </main>
   );
 }
