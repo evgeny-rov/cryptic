@@ -5,11 +5,24 @@ import omit from 'lodash/omit';
 
 type NoteId = string;
 
-interface Note {
+interface PlainNote {
   id: NoteId;
-  type: 'encrypted' | 'plain';
+  type: 'plain';
   data: string;
 }
+
+interface EncryptedNote {
+  id: NoteId;
+  type: 'encrypted';
+  data: {
+    iv: string;
+    salt: string;
+    ciphertext: string;
+  };
+}
+
+type Note = PlainNote | EncryptedNote;
+type PartialNote = Omit<PlainNote, 'id'> | Omit<EncryptedNote, 'id'>;
 
 interface NotesState {
   allIds: NoteId[];
@@ -20,6 +33,7 @@ interface NotesState {
   updateNote: (id: NoteId, updateNote: Note) => void;
   deleteNote: (id: NoteId) => void;
   selectNote: (id: NoteId) => void;
+  appendExternalNotes: (partialNote: PartialNote[]) => void;
 }
 
 const createDefaultState = () => {
@@ -45,6 +59,23 @@ const useNotesStore = create<NotesState>()((set) => ({
       allIds: [id, ...state.allIds],
       byId: { ...state.byId, [id]: newNote },
       selectedNoteId: id,
+    }));
+  },
+  appendExternalNotes(partialNotes) {
+    const prepared = partialNotes.reduce<Pick<NotesState, 'allIds' | 'byId'>>(
+      (acc, partialNote) => {
+        const id = uuidv4();
+        const newNote = { id, ...partialNote };
+
+        return { ...acc, allIds: [...acc.allIds, id], byId: { ...acc.byId, [id]: newNote } };
+      },
+      { allIds: [], byId: {} }
+    );
+
+    set((state) => ({
+      ...state,
+      allIds: [...state.allIds, ...prepared.allIds],
+      byId: { ...state.byId, ...prepared.byId },
     }));
   },
   updateNote: (id, updatedNote) =>
