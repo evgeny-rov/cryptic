@@ -5,8 +5,9 @@ import lockIcon from '../assets/lock.svg';
 import trashIcon from '../assets/trash.svg';
 
 import { useNotesStore } from '../stores/notes-store';
-import { parseFiles, promptExport, promptImport } from '../utils/files';
-import { parseNotes } from '../utils/parse-notes';
+import { parseFiles, promptExport, promptImport } from '../stores/file-store';
+import { parseNotes } from '../utils/parse-external-notes';
+import { useEncryptionDialogStore } from '../stores/dialogs-store';
 
 const ToolbarButton = ({
   onClick,
@@ -29,6 +30,7 @@ export default function Toolbar() {
   const createNote = useNotesStore((state) => state.createNote);
   const deleteNote = useNotesStore((state) => () => state.deleteNote(state.selectedNoteId));
   const appendExternalNotes = useNotesStore((state) => state.appendExternalNotes);
+  const toggleEncryptionDialog = useEncryptionDialogStore((state) => state.toggle);
 
   const handleImport = async () => {
     const pickedFiles = await promptImport();
@@ -44,7 +46,9 @@ export default function Toolbar() {
         <ToolbarButton title="Import notes" onClick={handleImport} iconSrc={importIcon} />
       </div>
       <div className="grid place-items-center gap-5">
-        <ToolbarButton title="Encrypt note" onClick={() => null} iconSrc={lockIcon} />
+        {currentNote.type === 'plain' && (
+          <ToolbarButton title="Encrypt note" onClick={toggleEncryptionDialog} iconSrc={lockIcon} />
+        )}
         <ToolbarButton
           title="Download note"
           onClick={() => promptExport(currentNote)}

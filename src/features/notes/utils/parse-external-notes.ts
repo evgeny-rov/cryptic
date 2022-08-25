@@ -2,11 +2,13 @@ import { z } from 'zod';
 
 const plainNoteSchema = z.object({
   type: z.literal('plain'),
+  title: z.string(),
   data: z.string().min(1),
 });
 
 const encryptedNoteSchema = z.object({
   type: z.literal('encrypted'),
+  title: z.string(),
   data: z.object({
     salt: z.string().min(1),
     iv: z.string().min(1),
@@ -21,10 +23,10 @@ interface ParsedNotes {
   failed: unknown[];
 }
 
-const parseNotes = (someDataList: string[]): ParsedNotes => {
+const parseNotes = (maybeNotesList: string[]): ParsedNotes => {
   const result: ParsedNotes = { successful: [], failed: [] };
 
-  for (const item of someDataList) {
+  for (const item of maybeNotesList) {
     try {
       const json = JSON.parse(item);
       const note = noteSchema.parse(json);

@@ -8,12 +8,14 @@ type NoteId = string;
 interface PlainNote {
   id: NoteId;
   type: 'plain';
+  title: string;
   data: string;
 }
 
 interface EncryptedNote {
   id: NoteId;
   type: 'encrypted';
+  title: string;
   data: {
     iv: string;
     salt: string;
@@ -30,7 +32,7 @@ interface NotesState {
   selectedNoteId: NoteId;
 
   createNote: () => void;
-  updateNote: (id: NoteId, updateNote: Note) => void;
+  updateNote: (id: NoteId, updatedNote: Note) => void;
   deleteNote: (id: NoteId) => void;
   selectNote: (id: NoteId) => void;
   appendExternalNotes: (partialNote: PartialNote[]) => void;
@@ -38,7 +40,12 @@ interface NotesState {
 
 const createDefaultState = () => {
   const id = uuidv4();
-  const emptyNote: Note = { id, type: 'plain', data: '' };
+  const emptyNote: Note = {
+    id,
+    type: 'plain',
+    title: 'Untitled Note',
+    data: '',
+  };
 
   return {
     allIds: [id],
@@ -52,7 +59,7 @@ const useNotesStore = create<NotesState>()((set) => ({
 
   createNote: () => {
     const id = uuidv4();
-    const newNote: Note = { id, type: 'plain', data: '' };
+    const newNote: Note = { id, type: 'plain', title: 'Untitled Note', data: '' };
 
     set((state) => ({
       ...state,
@@ -97,5 +104,5 @@ const useNotesStore = create<NotesState>()((set) => ({
   selectNote: (id) => set((state) => ({ ...state, selectedNoteId: id })),
 }));
 
-export type { NoteId, Note };
+export type { NoteId, EncryptedNote, PlainNote, Note };
 export { useNotesStore };

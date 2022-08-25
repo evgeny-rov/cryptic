@@ -25,24 +25,24 @@ const promptImport = (): Promise<FileList> => {
 };
 
 const promptExport = (note: Note) => {
-  const link = document.createElement('a');
+  const fileLink = document.createElement('a');
 
-  const dateString = new Date().toLocaleString(undefined, {
+  const date = new Date().toLocaleString(undefined, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
 
-  const filename = `Note - ${dateString}.cryptic`;
-  link.download = filename;
+  const filename = `${note.title} - ${date}.cryptic`;
+  fileLink.download = filename;
 
-  const data = { type: note.type, data: note.data };
+  const data = { type: note.type, title: note.title, data: note.data };
 
   const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
 
-  link.href = URL.createObjectURL(blob);
-  link.click();
-  URL.revokeObjectURL(link.href);
+  fileLink.href = URL.createObjectURL(blob);
+  fileLink.click();
+  URL.revokeObjectURL(fileLink.href);
 };
 
 export { promptExport, promptImport, parseFiles };

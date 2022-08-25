@@ -1,27 +1,27 @@
 import { useNotesStore } from '../stores/notes-store';
 import type { NoteId } from '../stores/notes-store';
+import encryptedIcon from '../assets/encrypted.svg';
 
 const NoteListItem = ({ id }: { id: NoteId }) => {
   const note = useNotesStore((state) => state.byId[id]);
   const isSelected = useNotesStore((state) => state.selectedNoteId === id);
   const selectNote = useNotesStore((state) => state.selectNote);
 
-  const notePreviewText = note.data.trim().split(/\r?\n/)[0];
-
   return (
-    <li className="h-9">
-      <button
-        onClick={() => selectNote(id)}
-        className={`w-full h-full px-3 flex items-center gap-4 rounded-md hover:opacity-100 ${
-          isSelected ? 'bg-[#202023]' : 'opacity-50'
-        }`}
-        type="button"
-      >
-        <span className="text-xl">{'•'}</span>
-        <span className="w-44 text-left capitalize overflow-hidden whitespace-nowrap text-ellipsis">
-          {notePreviewText || 'Empty note'}
-        </span>
-      </button>
+    <li
+      className={`h-9 px-3 flex items-center gap-3 rounded-md hover:opacity-100 cursor-pointer ${
+        isSelected ? 'bg-[#202023]' : 'opacity-50'
+      }`}
+      onClick={() => selectNote(id)}
+    >
+      {note.type === 'plain' ? (
+        <span className="w-2.5 text-xl">{'•'}</span>
+      ) : (
+        <img className="w-2.5" src={encryptedIcon} alt="Lock image" />
+      )}
+      <span className="w-44 capitalize overflow-hidden whitespace-nowrap text-ellipsis">
+        {note.title}
+      </span>
     </li>
   );
 };
