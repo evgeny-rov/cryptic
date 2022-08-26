@@ -29,14 +29,14 @@ export default function Toolbar() {
   const currentNote = useNotesStore((state) => state.byId[state.selectedNoteId]);
   const createNote = useNotesStore((state) => state.createNote);
   const deleteNote = useNotesStore((state) => () => state.deleteNote(state.selectedNoteId));
-  const appendExternalNotes = useNotesStore((state) => state.appendExternalNotes);
+  const addNote = useNotesStore((state) => state.addNote);
   const toggleEncryptionDialog = useEncryptionDialogStore((state) => state.toggle);
 
   const handleImport = async () => {
     const pickedFiles = await promptImport();
     const maybeSerializedNotes = await parseFiles(pickedFiles);
     const importedNotes = parseNotes(maybeSerializedNotes);
-    appendExternalNotes(importedNotes.successful);
+    importedNotes.successful.forEach(addNote);
   };
 
   return (

@@ -32,7 +32,7 @@ const EditorEncryptedNote = ({
     <div className="w-full h-full grid place-items-center">
       <form onSubmit={handleDecrypt} className="w-1/2 grid place-items-center gap-4">
         <img
-          className={`w-10 ${hasError ? 'animate-wiggle' : ''}`}
+          className={`w-14 ${hasError ? 'animate-wiggle' : ''}`}
           onAnimationEnd={() => setHasError(false)}
           src={lockIcon}
           alt="Lock image"
@@ -43,6 +43,7 @@ const EditorEncryptedNote = ({
           required
           type="password"
           name="password"
+          id="current-password"
           autoComplete="current-password"
           className="px-2 rounded-md bg-zinc-700"
           value={password}

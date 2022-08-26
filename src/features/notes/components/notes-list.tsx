@@ -15,7 +15,7 @@ const NoteListItem = ({ id }: { id: NoteId }) => {
       onClick={() => selectNote(id)}
     >
       {note.type === 'plain' ? (
-        <span className="w-2.5 text-xl">{'•'}</span>
+        <span className="w-2.5 text-xl text-center">{'•'}</span>
       ) : (
         <img className="w-2.5" src={encryptedIcon} alt="Lock image" />
       )}
