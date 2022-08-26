@@ -32,7 +32,6 @@ export default function EncryptionDialog({
       updateNote(note.id, { ...note, type: 'encrypted', data: cipher });
     } catch (e) {
       // ignore for now
-      console.log(e);
     }
   };
 
@@ -40,28 +39,36 @@ export default function EncryptionDialog({
 
   return (
     <div className="absolute w-full h-full grid place-items-center bg-[#252528] bg-opacity-90">
-      <form action="" onSubmit={handleEncrypt} className="w-1/2 grid place-items-center gap-5">
-        <img className={`w-10 ${error ? 'animate-wiggle' : ''}`} src={lockIcon} alt="Lock image" />
+      <form onSubmit={handleEncrypt} className="w-1/2 grid place-items-center gap-5">
+        <img className={`w-14 ${error ? 'animate-wiggle' : ''}`} src={lockIcon} alt="Lock image" />
         <h2 className="font-semibold text-lg capitalize">Encrypt note.</h2>
         <p className="text-red-400 h-4">{error ?? ''}</p>
-        <label className="grid gap-1">
+        <label htmlFor="current-password" className="grid gap-1">
           <span>Password:</span>
           <input
             required
             type="password"
             name="password"
+            id="current-password"
+            minLength={5}
+            autoComplete="current-password"
             className="px-2 rounded-md bg-zinc-700"
             value={password}
             onChange={(ev) => setPassword(ev.target.value)}
           />
         </label>
-        <label className="grid gap-1">
+        <label htmlFor="confirm-password" className="grid gap-1">
           <span>Confirm Password:</span>
           <input
             required
             type="password"
-            name="confirm"
-            className={`px-2 rounded-md outline-red-400 bg-zinc-700 ${error ? 'outline' : ''}`}
+            name="password"
+            id="confirm-password"
+            minLength={5}
+            autoComplete="current-password"
+            className={`px-2 rounded-md bg-zinc-700 ${
+              error ? 'outline outline-red-400 outline-4' : ''
+            }`}
             value={confirmationPassword}
             onChange={(ev) => setConfirmationPassword(ev.target.value)}
           />

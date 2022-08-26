@@ -32,10 +32,10 @@ interface NotesState {
   selectedNoteId: NoteId;
 
   createNote: () => void;
+  addNote: (noteData: PartialNote) => void;
   updateNote: (id: NoteId, updatedNote: Note) => void;
   deleteNote: (id: NoteId) => void;
   selectNote: (id: NoteId) => void;
-  appendExternalNotes: (partialNote: PartialNote[]) => void;
 }
 
 const createDefaultState = () => {
@@ -54,7 +54,7 @@ const createDefaultState = () => {
   };
 };
 
-const useNotesStore = create<NotesState>()((set) => ({
+const useNotesStore = create<NotesState>()((set, get) => ({
   ...createDefaultState(),
 
   createNote: () => {
@@ -68,21 +68,21 @@ const useNotesStore = create<NotesState>()((set) => ({
       selectedNoteId: id,
     }));
   },
-  appendExternalNotes(partialNotes) {
-    const prepared = partialNotes.reduce<Pick<NotesState, 'allIds' | 'byId'>>(
-      (acc, partialNote) => {
-        const id = uuidv4();
-        const newNote = { id, ...partialNote };
+  addNote: (noteData) => {
+    const id = uuidv4();
+    const newNote = { id, ...noteData };
 
-        return { ...acc, allIds: [...acc.allIds, id], byId: { ...acc.byId, [id]: newNote } };
-      },
-      { allIds: [], byId: {} }
-    );
+    const currentState = get();
+    const hasOneNote = currentState.allIds.length === 1;
+    const firstNote = currentState.byId[currentState.allIds[0]];
+    const isFirstNoteEmpty = firstNote.type !== 'encrypted' && firstNote.data === '';
+    const isPristine = hasOneNote && isFirstNoteEmpty;
 
     set((state) => ({
       ...state,
-      allIds: [...state.allIds, ...prepared.allIds],
-      byId: { ...state.byId, ...prepared.byId },
+      allIds: isPristine ? [id] : [...state.allIds, id],
+      byId: isPristine ? { [id]: newNote } : { ...state.byId, [id]: newNote },
+      selectedNoteId: isPristine ? id : state.selectedNoteId,
     }));
   },
   updateNote: (id, updatedNote) =>
