@@ -13,14 +13,22 @@ const ToolbarButton = ({
   onClick,
   iconSrc,
   title,
+  disabled = false,
 }: {
   onClick: () => void;
   iconSrc: string;
   title: string;
+  disabled?: boolean;
 }) => {
   return (
-    <button className="opacity-70 hover:opacity-100" type="button" title={title} onClick={onClick}>
-      <img src={iconSrc} alt={title} />
+    <button
+      disabled={disabled}
+      className="px-[0.65rem] flex items-center opacity-70 hover:opacity-100 disabled:opacity-10"
+      type="button"
+      title={title}
+      onClick={onClick}
+    >
+      <img className="h-4" src={iconSrc} alt={title} />
     </button>
   );
 };
@@ -39,23 +47,20 @@ export default function Toolbar() {
     importedNotes.successful.forEach(addNote);
   };
 
+  const handleExport = () => promptExport(currentNote);
+
   return (
-    <div className="h-full w-full py-3 px-[0.4rem] rounded-md flex flex-col justify-between bg-[#202023] border-2 border-zinc-800">
-      <div className="grid place-items-center gap-5">
-        <ToolbarButton title="Create note" onClick={createNote} iconSrc={createIcon} />
-        <ToolbarButton title="Import notes" onClick={handleImport} iconSrc={importIcon} />
-      </div>
-      <div className="grid place-items-center gap-5">
-        {currentNote.type === 'plain' && (
-          <ToolbarButton title="Encrypt note" onClick={toggleEncryptionDialog} iconSrc={lockIcon} />
-        )}
-        <ToolbarButton
-          title="Download note"
-          onClick={() => promptExport(currentNote)}
-          iconSrc={downloadIcon}
-        />
-        <ToolbarButton title="Delete note" onClick={deleteNote} iconSrc={trashIcon} />
-      </div>
+    <div className="w-fit h-9 rounded-md flex bg-[#202023] border-2 border-zinc-800">
+      <ToolbarButton title="Create note" onClick={createNote} iconSrc={createIcon} />
+      <ToolbarButton title="Import notes" onClick={handleImport} iconSrc={importIcon} />
+      <ToolbarButton
+        title="Encrypt note"
+        onClick={toggleEncryptionDialog}
+        iconSrc={lockIcon}
+        disabled={currentNote.type === 'encrypted'}
+      />
+      <ToolbarButton title="Download note" onClick={handleExport} iconSrc={downloadIcon} />
+      <ToolbarButton title="Delete note" onClick={deleteNote} iconSrc={trashIcon} />
     </div>
   );
 }
