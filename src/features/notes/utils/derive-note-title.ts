@@ -3,10 +3,10 @@ const deriveNoteTitle = (text: string) => {
 
   if (!firstLine) return text;
 
-  const words = firstLine[0].split(' ');
+  const words = firstLine[0].trim().split(' ');
   const title = words.slice(0, 3).join(' ');
 
-  return title;
+  return title || 'Untitled Note';
 };
 
 export default deriveNoteTitle;
