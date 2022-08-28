@@ -23,12 +23,12 @@ const ToolbarButton = ({
   return (
     <button
       disabled={disabled}
-      className="px-[0.65rem] flex items-center opacity-70 hover:opacity-100 disabled:opacity-10"
+      className="px-[0.4rem] grid place-items-center opacity-70 hover:opacity-100 disabled:opacity-10"
       type="button"
       title={title}
       onClick={onClick}
     >
-      <img className="h-4" src={iconSrc} alt={title} />
+      <img src={iconSrc} alt={title} />
     </button>
   );
 };
@@ -50,7 +50,7 @@ export default function Toolbar() {
   const handleExport = () => promptExport(currentNote);
 
   return (
-    <div className="w-fit h-9 rounded-md flex bg-[#202023] border-2 border-zinc-800">
+    <div className="w-full h-full rounded-md flex flex-col gap-5 py-4 bg-[#202023] border-2 border-zinc-800">
       <ToolbarButton title="Create note" onClick={createNote} iconSrc={createIcon} />
       <ToolbarButton title="Import notes" onClick={handleImport} iconSrc={importIcon} />
       <ToolbarButton
