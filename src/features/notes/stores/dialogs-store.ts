@@ -1,13 +1,13 @@
 import create from 'zustand';
 
-interface DialogState {
+interface DialogsState {
   isOpen: boolean;
   open: () => void;
   close: () => void;
   toggle: () => void;
 }
 
-const useEncryptionDialogStore = create<DialogState>()((set) => ({
+const useNoteAccessDialog = create<DialogsState>()((set) => ({
   isOpen: false,
 
   open: () => {
@@ -23,4 +23,4 @@ const useEncryptionDialogStore = create<DialogState>()((set) => ({
   },
 }));
 
-export { useEncryptionDialogStore };
+export { useNoteAccessDialog };

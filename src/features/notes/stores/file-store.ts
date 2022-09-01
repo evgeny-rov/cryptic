@@ -1,8 +1,5 @@
-import type { Note } from '../stores/notes-store';
-
-const parseFiles = async (files: FileList) => {
-  return Promise.all([...files].map((file) => file.text()));
-};
+import { z } from 'zod';
+import type { ExternalNote, Note } from '../stores/notes-store';
 
 const promptImport = (): Promise<FileList> => {
   return new Promise((res, rej) => {
@@ -36,7 +33,8 @@ const promptExport = (note: Note) => {
   const filename = `${note.title} - ${date}.cryptic`;
   fileLink.download = filename;
 
-  const data = { type: note.type, title: note.title, data: note.data };
+  const { id, ...noteData } = note;
+  const data: z.infer<typeof noteSchema> = noteData;
 
   const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
 
@@ -45,4 +43,52 @@ const promptExport = (note: Note) => {
   URL.revokeObjectURL(fileLink.href);
 };
 
-export { promptExport, promptImport, parseFiles };
+const parseFiles = async (files: FileList) => {
+  return Promise.all([...files].map((file) => file.text()));
+};
+
+const plainNoteSchema = z
+  .object({
+    type: z.literal('plain'),
+    title: z.string(),
+    data: z.string().min(1),
+  })
+  .strip();
+
+const encryptedNoteSchema = z
+  .object({
+    type: z.literal('encrypted'),
+    title: z.string(),
+    data: z.object({
+      salt: z.string().min(1),
+      iv: z.string().min(1),
+      ciphertext: z.string().min(1),
+    }),
+  })
+  .strip();
+
+const noteSchema: z.ZodType<ExternalNote> = z.union([plainNoteSchema, encryptedNoteSchema]);
+
+interface ParsedNotes {
+  successful: z.infer<typeof noteSchema>[];
+  failed: unknown[];
+}
+
+const parseNotes = (maybeNotesList: string[]): ParsedNotes => {
+  const result: ParsedNotes = { successful: [], failed: [] };
+
+  for (const item of maybeNotesList) {
+    try {
+      const json = JSON.parse(item);
+      const note = noteSchema.parse(json);
+
+      result.successful.push(note);
+    } catch (e) {
+      result.failed.push(e);
+    }
+  }
+
+  return result;
+};
+
+export { promptExport, promptImport, parseFiles, parseNotes };

@@ -1,3 +1,8 @@
+interface KeyData {
+  saltBits: Uint8Array;
+  key: CryptoKey;
+}
+
 interface Cipher {
   salt: string;
   iv: string;
@@ -58,11 +63,17 @@ const deriveKey = async (password: string, saltBits: Uint8Array) => {
   return key;
 };
 
-const encrypt = async (plaintext: string, password: string): Promise<Cipher> => {
+const createKey = async (password: string, salt?: string): Promise<KeyData> => {
+  const saltBits = salt ? hexToArrayBuffer(salt) : getRandomSalt();
+  const key = await deriveKey(password, saltBits);
+
+  return { key, saltBits };
+};
+
+const encrypt = async (plaintext: string, keyData: KeyData): Promise<Cipher> => {
   const encoded = encodeText(plaintext);
   const ivBits = getRandomIV();
-  const saltBits = getRandomSalt();
-  const key = await deriveKey(password, saltBits);
+  const { key, saltBits } = keyData;
 
   const cipherBits = await window.crypto.subtle.encrypt(
     {
@@ -80,10 +91,9 @@ const encrypt = async (plaintext: string, password: string): Promise<Cipher> => 
   return { iv, salt, ciphertext };
 };
 
-const decrypt = async (cipher: Cipher, password: string): Promise<string> => {
+const decrypt = async (cipher: Cipher, keyData: KeyData): Promise<string> => {
   const ivBits = hexToArrayBuffer(cipher.iv);
-  const saltBits = hexToArrayBuffer(cipher.salt);
-  const key = await deriveKey(password, saltBits);
+  const { key } = keyData;
 
   const plaintextBits = await window.crypto.subtle.decrypt(
     {
@@ -97,4 +107,5 @@ const decrypt = async (cipher: Cipher, password: string): Promise<string> => {
   return decodeText(plaintextBits);
 };
 
-export { encrypt, decrypt };
+export type { KeyData };
+export { encrypt, decrypt, createKey };
