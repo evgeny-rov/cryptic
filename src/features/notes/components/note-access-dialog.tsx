@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
-import lockIcon from '../assets/lock.svg';
-import { encrypt } from '../../crypto';
-import { useEncryptionDialogStore } from '../stores/dialogs-store';
-import { PlainNote, Note } from '../stores/notes-store';
+import { ReactComponent as PrivateIcon } from '../assets/private.svg';
+import { createKey, encrypt } from '../../crypto';
+import { PlainNote, RemoveNameField, Note } from '../stores/notes-store';
 
-export default function EncryptionDialog({
+export default function NoteAccessDialog({
   note,
-  updateNote,
+  changeNote,
 }: {
   note: PlainNote;
-  updateNote: (id: string, updatedNote: Note) => void;
+  changeNote: (id: string, updatedNote: RemoveNameField<Note, 'id'>) => void;
 }) {
-  const isOpen = useEncryptionDialogStore((state) => state.isOpen);
   const [error, setError] = useState<string | null>(null);
   const [password, setPassword] = useState('');
   const [confirmationPassword, setConfirmationPassword] = useState('');
@@ -28,20 +26,19 @@ export default function EncryptionDialog({
     ev.preventDefault();
 
     try {
-      const cipher = await encrypt(note.data, password);
-      updateNote(note.id, { ...note, type: 'encrypted', data: cipher });
+      const newKey = await createKey(password);
+      const cipher = await encrypt(note.data, newKey);
+      changeNote(note.id, { type: 'encrypted', title: note.title, data: cipher });
     } catch (e) {
       // ignore for now
     }
   };
 
-  if (!isOpen) return null;
-
   return (
     <div className="absolute w-full h-full grid place-items-center bg-[#252528] bg-opacity-90">
       <form onSubmit={handleEncrypt} className="w-1/2 grid place-items-center gap-5">
-        <img className={`w-14 ${error ? 'animate-wiggle' : ''}`} src={lockIcon} alt="Lock image" />
-        <h2 className="font-semibold text-lg capitalize">Encrypt note.</h2>
+        <PrivateIcon className={`w-14 ${error ? 'animate-wiggle' : ''}`} />
+        <h2 className="font-semibold text-lg capitalize">Lock note.</h2>
         <p className="text-red-400 h-4">{error ?? ''}</p>
         <label htmlFor="current-password" className="grid gap-1">
           <span>Password:</span>
@@ -73,8 +70,8 @@ export default function EncryptionDialog({
             onChange={(ev) => setConfirmationPassword(ev.target.value)}
           />
         </label>
-        <button disabled={error !== null} className="text-sm">
-          Encrypt
+        <button disabled={error !== null} className="text-sm font-semibold disabled:opacity-25">
+          Lock
         </button>
       </form>
     </div>
