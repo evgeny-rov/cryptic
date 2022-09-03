@@ -14,6 +14,7 @@ Less is more. Cryptic trades some convenience in favor of privacy which means:
  - [ ] - Selecting multiple notes for export.
  - [ ] - Markdown or rich text editor support.
  - [ ] - PWA maybe.
+ - [ ] - Mobile support.
 
 ### FYI
 **Be mindful when storing any sensitive information in your notes**. This is just a pet project and my attempt at learning and understanding cryptography, in fact feel free to point out any issues or vulnerabilities, i'm always happy to learn.
