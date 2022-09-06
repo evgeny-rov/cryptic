@@ -1,6 +1,6 @@
 <img width="1167" alt="cryptic-mock" src="https://user-images.githubusercontent.com/53393266/188257748-d139a32a-f62d-44d3-8a0a-f5c34f225f9e.png">
 
-Cryptic is a note taking app with emphasis on privacy.
+[Cryptic](https://cryptic-gamma.vercel.app/) is a note taking app with emphasis on privacy.
 
 Less is more. Cryptic trades some convenience in favor of privacy which means:
  - You are not required to create account.
