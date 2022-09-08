@@ -1,0 +1,21 @@
+{
+  "name": "Cryptic",
+  "short_name": "Cryptic",
+  "description": "Note taking web app for when you want your privacy back.",
+  "start_url": "index.html",
+  "display": "minimal-ui",
+  "theme_color": "#0B0B0B",
+  "background_color": "#0B0B0B",
+  "icons": [
+    {
+      "src": "icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
