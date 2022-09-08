@@ -4,7 +4,7 @@ import Note from './note';
 
 export default function Notes() {
   return (
-    <main className="relative w-[65rem] h-[43rem] grid grid-cols-[15rem_2rem_1fr] gap-2">
+    <main className="relative w-full h-full grid grid-cols-[15rem_2rem_1fr] gap-2 xl:w-[65rem] xl:h-[43rem]">
       <NotesList />
       <Toolbar />
       <Note />
