@@ -13,6 +13,7 @@ export default function TextEditor({ note }: { note: PlainNote }) {
     <textarea
       value={note.data}
       onChange={handleChange}
+      spellCheck="true"
       className="p-6 w-full h-full bg-transparent outline-none resize-none"
     />
   );
