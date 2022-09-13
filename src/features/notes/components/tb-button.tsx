@@ -4,7 +4,7 @@ export default function TBButton({
   disabled = false,
   children,
 }: {
-  onClick: () => void;
+  onClick: (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   title: string;
   disabled?: boolean;
   children?: React.ReactNode;
@@ -12,7 +12,7 @@ export default function TBButton({
   return (
     <button
       disabled={disabled}
-      className="px-[0.4rem] h-7 grid place-items-center opacity-50 hover:opacity-100 disabled:opacity-10 focus:opacity-100"
+      className="px-[0.4rem] w-7 h-7 grid place-items-center opacity-50 hover:opacity-100 disabled:opacity-10 focus:opacity-100"
       type="button"
       title={title}
       onClick={onClick}

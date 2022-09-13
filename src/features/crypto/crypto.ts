@@ -1,4 +1,4 @@
-interface KeyData {
+export interface KeyData {
   saltBits: Uint8Array;
   key: CryptoKey;
 }
@@ -63,14 +63,14 @@ const deriveKey = async (password: string, saltBits: Uint8Array) => {
   return key;
 };
 
-const createKey = async (password: string, salt?: string): Promise<KeyData> => {
+export const createKey = async (password: string, salt?: string): Promise<KeyData> => {
   const saltBits = salt ? hexToArrayBuffer(salt) : getRandomSalt();
   const key = await deriveKey(password, saltBits);
 
   return { key, saltBits };
 };
 
-const encrypt = async (plaintext: string, keyData: KeyData): Promise<Cipher> => {
+export const encrypt = async (plaintext: string, keyData: KeyData): Promise<Cipher> => {
   const encoded = encodeText(plaintext);
   const ivBits = getRandomIV();
   const { key, saltBits } = keyData;
@@ -91,7 +91,7 @@ const encrypt = async (plaintext: string, keyData: KeyData): Promise<Cipher> => 
   return { iv, salt, ciphertext };
 };
 
-const decrypt = async (cipher: Cipher, keyData: KeyData): Promise<string> => {
+export const decrypt = async (cipher: Cipher, keyData: KeyData): Promise<string> => {
   const ivBits = hexToArrayBuffer(cipher.iv);
   const { key } = keyData;
 
@@ -106,6 +106,3 @@ const decrypt = async (cipher: Cipher, keyData: KeyData): Promise<string> => {
 
   return decodeText(plaintextBits);
 };
-
-export type { KeyData };
-export { encrypt, decrypt, createKey };

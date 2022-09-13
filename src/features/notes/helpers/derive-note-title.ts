@@ -1,4 +1,4 @@
-const deriveNoteTitle = (text: string) => {
+export default (text: string) => {
   const firstLine = text.match(/^.*$/m);
 
   if (!firstLine) return text;
@@ -10,5 +10,3 @@ const deriveNoteTitle = (text: string) => {
 
   return title || 'Untitled Note';
 };
-
-export default deriveNoteTitle;

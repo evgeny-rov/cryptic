@@ -3,36 +3,45 @@ import { persist, PersistOptions } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 import without from 'lodash/without';
 import omit from 'lodash/omit';
+import zipObject from 'lodash/zipObject';
 
-import { encrypt, KeyData } from '../../crypto';
-
-type RemoveNameField<Type, Keys> = {
-  [Property in keyof Type as Exclude<Property, Keys>]: Type[Property];
-};
+import deriveNoteTitle from '../helpers/derive-note-title';
+import { createKey, decrypt, encrypt, KeyData } from '../../crypto';
+import type { RemoveNameField } from '../types';
 
 type NoteId = string;
+type NoteType = 'plain' | 'unlocked' | 'encrypted';
+type NoteTitle = string;
 
-type PlainNote = {
+interface BaseNote {
   id: NoteId;
+  type: NoteType;
+  title: NoteTitle;
+}
+
+export interface PlainNote extends BaseNote {
   type: 'plain';
-  title: string;
-  credentials?: KeyData;
   data: string;
-};
+}
 
-type EncryptedNote = {
-  id: NoteId;
+export interface UnlockedNote extends BaseNote {
+  type: 'unlocked';
+  data: string;
+  credentials: KeyData;
+}
+
+export interface EncryptedNote extends BaseNote {
   type: 'encrypted';
-  title: string;
   data: {
     iv: string;
     salt: string;
     ciphertext: string;
   };
-};
+}
 
-type Note = PlainNote | EncryptedNote;
-type ExternalNote = Omit<PlainNote, 'id' | 'credentials'> | Omit<EncryptedNote, 'id'>;
+export type Note = PlainNote | UnlockedNote | EncryptedNote;
+export type EditableNote = PlainNote | UnlockedNote;
+export type ExternalNote = RemoveNameField<PlainNote | EncryptedNote, 'id'>;
 
 interface NotesState {
   allIds: NoteId[];
@@ -40,25 +49,32 @@ interface NotesState {
   selectedNoteId: NoteId;
 
   createNewNote: () => void;
-  addExternalNote: (noteData: ExternalNote) => void;
-  deleteNote: (id: NoteId) => void;
   selectNote: (id: NoteId) => void;
-  changeNote: (id: NoteId, noteData: RemoveNameField<Note, 'id'>) => void;
+  changeNoteText: (id: NoteId, text: string) => void;
+  deleteNote: (id: NoteId) => void;
+
+  addLock: (note: EditableNote, password: string) => Promise<void>;
+  lockNote: (note: UnlockedNote) => Promise<void>;
+  unlockNote: (note: EncryptedNote, password: string) => Promise<void>;
+  removeLock: (note: UnlockedNote) => void;
+
+  importNotes: (notes: ExternalNote[]) => void;
 }
 
+const createPlainNote = (): PlainNote => ({
+  id: uuidv4(),
+  type: 'plain',
+  title: 'Untitled Note',
+  data: '',
+});
+
 const createDefaultState = () => {
-  const id = uuidv4();
-  const placeholderNote: Note = {
-    id,
-    type: 'plain',
-    title: 'Untitled Note',
-    data: '',
-  };
+  const placeholderNote = createPlainNote();
 
   return {
-    allIds: [id],
-    byId: { [id]: placeholderNote },
-    selectedNoteId: id,
+    allIds: [placeholderNote.id],
+    byId: { [placeholderNote.id]: placeholderNote },
+    selectedNoteId: placeholderNote.id,
   };
 };
 
@@ -70,7 +86,7 @@ const persistConfig: PersistOptions<NotesState> = {
     for (const id of store.state.allIds) {
       const note = store.state.byId[id];
 
-      if (note.type === 'plain' && note.credentials) {
+      if (note.type === 'unlocked') {
         const cipher = await encrypt(note.data, note.credentials);
         persistedNotesById[id] = { id, type: 'encrypted', title: note.title, data: cipher };
       } else {
@@ -90,42 +106,28 @@ const persistConfig: PersistOptions<NotesState> = {
   },
 };
 
-const useNotesStore = create<NotesState>()(
+export const useNotesStore = create<NotesState>()(
   persist(
     (set, get) => ({
       ...createDefaultState(),
 
       createNewNote: () => {
-        const id = uuidv4();
-        const newNote: Note = {
-          id,
-          type: 'plain',
-          title: 'Untitled Note',
-          data: '',
-        };
+        const newNote = createPlainNote();
 
         set((state) => ({
-          ...state,
-          allIds: [id, ...state.allIds],
-          byId: { ...state.byId, [id]: newNote },
-          selectedNoteId: id,
+          allIds: [newNote.id, ...state.allIds],
+          byId: { ...state.byId, [newNote.id]: newNote },
+          selectedNoteId: newNote.id,
         }));
       },
-      addExternalNote: (noteData) => {
-        const id = uuidv4();
-        const newNote: Note = { id, ...noteData };
+      selectNote: (id) => set((state) => ({ ...state, selectedNoteId: id })),
+      changeNoteText: (id, text) => {
+        const note = get().byId[id];
 
-        const currentState = get();
-        const hasOneNote = currentState.allIds.length === 1;
-        const firstNote = currentState.byId[currentState.allIds[0]];
-        const isFirstNoteEmpty = firstNote.type !== 'encrypted' && firstNote.data === '';
-        const isPristine = hasOneNote && isFirstNoteEmpty;
+        if (note.type === 'encrypted') return;
 
         set((state) => ({
-          ...state,
-          allIds: isPristine ? [id] : [...state.allIds, id],
-          byId: isPristine ? { [id]: newNote } : { ...state.byId, [id]: newNote },
-          selectedNoteId: isPristine ? id : state.selectedNoteId,
+          byId: { ...state.byId, [id]: { ...note, data: text, title: deriveNoteTitle(text) } },
         }));
       },
       deleteNote: (id) =>
@@ -136,19 +138,53 @@ const useNotesStore = create<NotesState>()(
           const byId = omit(state.byId, id);
           const selectedNoteId = allIds[0];
 
-          return { ...state, allIds, byId, selectedNoteId };
+          return { allIds, byId, selectedNoteId };
         }),
-      selectNote: (id) => set((state) => ({ ...state, selectedNoteId: id })),
-      changeNote: (id, noteData) =>
+      addLock: async (note, password) => {
+        const newKey = await createKey(password);
+        const cipher = await encrypt(note.data, newKey);
+        const lockedNote: EncryptedNote = { ...note, type: 'encrypted', data: cipher };
+
+        set((state) => ({ byId: { ...state.byId, [note.id]: lockedNote } }));
+      },
+      lockNote: async (note) => {
+        const cipher = await encrypt(note.data, note.credentials);
+        const lockedNote: EncryptedNote = { ...note, type: 'encrypted', data: cipher };
+
+        set((state) => ({ byId: { ...state.byId, [note.id]: lockedNote } }));
+      },
+      unlockNote: async (note, password) => {
+        const credentials = await createKey(password, note.data.salt);
+        const text = await decrypt(note.data, credentials);
+        const unlockedNote: UnlockedNote = { ...note, type: 'unlocked', data: text, credentials };
+
+        set((state) => ({ byId: { ...state.byId, [note.id]: unlockedNote } }));
+      },
+      removeLock: (note) => {
+        const { credentials, ...noteData } = note;
+        const plainNote: PlainNote = { ...noteData, type: 'plain' };
+        set((state) => ({ byId: { ...state.byId, [note.id]: plainNote } }));
+      },
+      importNotes: (notes) => {
+        if (notes.length === 0) return;
+
+        const notesWithIds = notes.map((note) => ({ id: uuidv4(), ...note }));
+        const ids = notesWithIds.map((note) => note.id);
+        const zippedById = zipObject(ids, notesWithIds);
+
+        const currentState = get();
+        const hasOneNote = currentState.allIds.length === 1;
+        const firstNote = currentState.byId[currentState.allIds[0]];
+        const isFirstNoteEmpty = firstNote.type !== 'encrypted' && firstNote.data === '';
+        const isPristine = hasOneNote && isFirstNoteEmpty;
+
         set((state) => ({
-          ...state,
-          allIds: [id, ...without(state.allIds, id)],
-          byId: { ...state.byId, [id]: { id, ...noteData } },
-        })),
+          allIds: isPristine ? ids : [...state.allIds, ...ids],
+          byId: isPristine ? zippedById : { ...state.byId, ...zippedById },
+          selectedNoteId: ids[0],
+        }));
+      },
     }),
     persistConfig
   )
 );
-
-export type { NoteId, EncryptedNote, PlainNote, Note, ExternalNote, RemoveNameField };
-export { useNotesStore };
