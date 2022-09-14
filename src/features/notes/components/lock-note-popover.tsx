@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ReactComponent as PrivateIcon } from '../assets/private.svg';
 import { useUiStore } from '../stores/ui-store';
 import { useNotesStore } from '../stores/notes-store';
+import { ReactComponent as CloseIcon } from '../assets/close.svg';
 
 export default function LockNotePopover() {
   const [currentNote, addLock] = useNotesStore((state) => [
@@ -44,16 +45,24 @@ export default function LockNotePopover() {
 
   return (
     <div className="absolute inset-0">
-      <div className={'fixed inset-0 bg-black/30 z-10'} onClick={handleClose}></div>
+      <div className="fixed inset-0 bg-black/30 z-30" onClick={handleClose}></div>
       <div
         tabIndex={-1}
         onBlur={handleBlur}
-        className="relative w-full h-full z-20 grid ring place-items-center rounded-md bg-[#252528] bg-opacity-90"
+        className="relative w-full h-full z-30 grid place-items-center overflow-y-auto bg-[#252528] bg-opacity-90 p-8 rounded-md"
       >
-        <form onSubmit={handleAddLock} className="w-1/2 grid place-items-center gap-5">
+        <button
+          className="absolute top-4 right-4 w-7 p-2 opacity-50"
+          type="button"
+          onClick={handleClose}
+        >
+          <CloseIcon />
+        </button>
+        <form onSubmit={handleAddLock} className="grid place-items-center gap-4">
           <PrivateIcon className={`w-14 ${error ? 'animate-wiggle' : ''}`} />
-          <h2 className="font-semibold text-lg capitalize">Lock note.</h2>
-          <p className="text-red-400 h-4">{error ?? ''}</p>
+          <h2 className={'capitalize text-lg font-semibold' + (error ? ' text-red-400' : '')}>
+            {error ?? 'Lock note.'}
+          </h2>
           <label htmlFor="current-password" className="grid gap-1">
             <span>Password:</span>
             <input
@@ -83,7 +92,10 @@ export default function LockNotePopover() {
               onChange={(ev) => setConfirmationPassword(ev.target.value)}
             />
           </label>
-          <button disabled={error !== null} className="text-sm font-semibold disabled:opacity-25">
+          <button
+            disabled={error !== null}
+            className="text-sm font-semibold disabled:opacity-25 p-2"
+          >
             Lock
           </button>
         </form>
