@@ -1,1 +1,1 @@
-export { default as Notes } from './components/notes';
+export { default as Notes } from './components/notes-layout';
