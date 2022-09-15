@@ -14,7 +14,7 @@ const Pane = ({ children, className }: { className: string; children: React.Reac
 
 export default function NotesLayout() {
   return (
-    <main className="relative w-full h-full flex flex-col xl:gap-1 md:flex-row xl:w-[64rem] xl:h-[45rem]">
+    <main className="relative w-full h-full overflow-hidden flex flex-col xl:gap-1 md:flex-row xl:w-[64rem] xl:h-[45rem]">
       <Pane className="hidden bg-[#202023] overflow-y-auto md:block py-2">
         <NotesList />
       </Pane>
@@ -24,7 +24,7 @@ export default function NotesLayout() {
         </div>
         <Toolbar />
       </Pane>
-      <Pane className="relative bg-[#252528] flex-grow">
+      <Pane className="bg-[#252528] relative flex-grow overflow-hidden">
         <LockNotePopover />
         <NoteContent />
       </Pane>

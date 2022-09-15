@@ -15,7 +15,7 @@ export default function NotesListDropdown() {
   const containerRef = useOutsideClick(close);
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef}>
       <button
         type="button"
         onClick={toggle}
@@ -29,7 +29,7 @@ export default function NotesListDropdown() {
         </span>
       </button>
       {isExpanded && (
-        <div className="absolute left-2 max-h-96 shadow-md rounded-md z-20 bg-zinc-900 overflow-y-auto px-1">
+        <div className="absolute z-20 max-h-[80%] left-2 shadow-md rounded-md bg-zinc-900 overflow-y-auto px-1">
           <NotesList />
         </div>
       )}

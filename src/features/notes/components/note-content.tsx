@@ -17,7 +17,7 @@ function TextEditor({ note }: { note: EditableNote }) {
       value={note.data}
       onChange={handleChange}
       spellCheck="true"
-      className="translate- p-6 w-full h-full bg-transparent outline-none resize-none"
+      className="p-6 w-full h-full bg-transparent outline-none resize-none"
     />
   );
 }
