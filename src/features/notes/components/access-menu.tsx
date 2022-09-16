@@ -15,7 +15,7 @@ export default function AccessMenu({ disabled }: { disabled: boolean }) {
   const toggle = () => setIsMenuOpen((prev) => !prev);
   const close = () => setIsMenuOpen(false);
 
-  const containerRef = useOutsideClick(close);
+  const containerRef = useOutsideClick<HTMLDivElement>(close, isMenuOpen);
 
   const options = ['lock note', 'change password', 'remove lock'] as const;
 

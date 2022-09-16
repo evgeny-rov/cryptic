@@ -12,7 +12,7 @@ export default function NotesListDropdown() {
   const close = () => setIsExpanded(false);
 
   useEffect(close, [currentNote]);
-  const containerRef = useOutsideClick(close);
+  const containerRef = useOutsideClick<HTMLDivElement>(close, isExpanded);
 
   return (
     <div ref={containerRef}>

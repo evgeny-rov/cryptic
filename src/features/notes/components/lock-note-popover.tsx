@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { ReactComponent as PrivateIcon } from '../assets/private.svg';
+import { z } from 'zod';
 import { useUiStore } from '../stores/ui-store';
 import { useNotesStore } from '../stores/notes-store';
-import { ReactComponent as CloseIcon } from '../assets/close.svg';
-import { z } from 'zod';
 import useOutsideClick from '../hooks/use-outside-click';
+import { ReactComponent as CloseIcon } from '../assets/close.svg';
+import { ReactComponent as PrivateIcon } from '../assets/private.svg';
 
 const validationSchema = z
   .object({
@@ -14,11 +14,11 @@ const validationSchema = z
   .refine((data) => data.password === data.confirm, { message: `Passwords don't match.` });
 
 export default function LockNotePopover() {
-  const [currentNote, addLock] = useNotesStore((state) => [
-    state.byId[state.selectedNoteId],
-    state.addLock,
-  ]);
+  const currentNote = useNotesStore((state) => state.byId[state.selectedNoteId]);
+  const addLock = useNotesStore((state) => state.addLock);
+
   const { isLockPopoverOpen, closeLockPopover } = useUiStore();
+
   const [formState, setFormState] = useState({
     password: '',
     confirm: '',
@@ -31,7 +31,7 @@ export default function LockNotePopover() {
     closeLockPopover();
   };
 
-  const containerRef = useOutsideClick(handleClose);
+  const containerRef = useOutsideClick<HTMLDivElement>(handleClose, isLockPopoverOpen);
 
   const handleChangePassword = (ev: React.ChangeEvent<HTMLInputElement>) => {
     setFormState((state) => {
