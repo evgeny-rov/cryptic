@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import classNames from 'classnames';
 import { ReactComponent as PrivateIcon } from '../assets/private.svg';
 import { EncryptedNote, useNotesStore } from '../stores/notes-store';
 
@@ -18,10 +19,10 @@ export default function UnlockNoteForm({ note }: { note: EncryptedNote }) {
   };
 
   return (
-    <div className="grid h-full place-items-center overflow-y-auto">
+    <div className="grid w-full place-items-center overflow-y-auto">
       <form onSubmit={handleUnlock} className="grid place-items-center gap-4 p-8">
         <PrivateIcon
-          className={`w-14 ${hasError ? 'animate-wiggle' : ''}`}
+          className={classNames('w-14', { 'animate-wiggle': hasError })}
           onAnimationEnd={() => setHasError(false)}
         />
         <h2 className="font-semibold text-lg capitalize">This note is locked.</h2>
@@ -32,7 +33,7 @@ export default function UnlockNoteForm({ note }: { note: EncryptedNote }) {
           name="password"
           id="current-password"
           autoComplete="current-password"
-          className="px-2 rounded-md bg-zinc-700"
+          className="w-52 px-2 rounded-md bg-zinc-700"
           value={password}
           onChange={(ev) => setPassword(ev.target.value)}
         />

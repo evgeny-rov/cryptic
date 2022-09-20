@@ -7,17 +7,17 @@ import { ReactComponent as LockIcon } from '../assets/lock.svg';
 import { useNotesStore } from '../stores/notes-store';
 import { useUiStore } from '../stores/ui-store';
 
-import TBButton from './tb-button';
 import promptImportNotes from '../helpers/prompt-import-notes';
 import exportNote from '../helpers/export-note';
 import AccessMenu from './access-menu';
+import ToolButton from './tool-button';
 
-export default function Toolbar() {
+export default function Tools() {
   const currentNote = useNotesStore((state) => state.byId[state.selectedNoteId]);
   const createNewNote = useNotesStore((state) => state.createNewNote);
   const deleteCurrentNote = useNotesStore((state) => () => state.deleteNote(currentNote.id));
   const importNotes = useNotesStore((state) => state.importNotes);
-  const openLockPopover = useUiStore((state) => state.openLockPopover);
+  const toggleLockPopover = useUiStore((state) => state.toggleLockPopover);
 
   const handleImportNotes = async () => {
     const parsedNotes = await promptImportNotes();
@@ -25,30 +25,26 @@ export default function Toolbar() {
   };
 
   return (
-    <div className="flex h-fit flex-wrap gap-4 justify-center">
-      <div className="flex flex-wrap gap-2 justify-center">
-        <TBButton title="Create Note" onClick={createNewNote}>
-          <CreateIcon />
-        </TBButton>
-        <TBButton title="Remove Note" onClick={deleteCurrentNote}>
-          <RemoveIcon />
-        </TBButton>
-      </div>
+    <>
+      <ToolButton title="Create Note" onClick={createNewNote}>
+        <CreateIcon />
+      </ToolButton>
+      <ToolButton title="Remove Note" onClick={deleteCurrentNote}>
+        <RemoveIcon />
+      </ToolButton>
       {currentNote.type === 'plain' ? (
-        <TBButton title="Lock Note" onClick={openLockPopover}>
+        <ToolButton title="Lock Note" onClick={toggleLockPopover}>
           <LockIcon />
-        </TBButton>
+        </ToolButton>
       ) : (
         <AccessMenu disabled={currentNote.type === 'encrypted'} />
       )}
-      <div className="flex flex-wrap gap-2 justify-center">
-        <TBButton title="Import Notes" onClick={handleImportNotes}>
-          <ImportIcon />
-        </TBButton>
-        <TBButton title="Export Note" onClick={() => exportNote(currentNote)}>
-          <ExportIcon />
-        </TBButton>
-      </div>
-    </div>
+      <ToolButton title="Import Notes" onClick={handleImportNotes}>
+        <ImportIcon />
+      </ToolButton>
+      <ToolButton title="Export Note" onClick={() => exportNote(currentNote)}>
+        <ExportIcon />
+      </ToolButton>
+    </>
   );
 }
