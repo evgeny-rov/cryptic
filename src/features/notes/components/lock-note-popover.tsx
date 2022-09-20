@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { ReactComponent as PrivateIcon } from '../assets/private.svg';
+import { z } from 'zod';
 import { useUiStore } from '../stores/ui-store';
 import { useNotesStore } from '../stores/notes-store';
 import { ReactComponent as CloseIcon } from '../assets/close.svg';
-import { z } from 'zod';
-import useOutsideClick from '../hooks/use-outside-click';
+import { ReactComponent as PrivateIcon } from '../assets/private.svg';
+import classNames from 'classnames';
 
 const validationSchema = z
   .object({
@@ -14,11 +14,11 @@ const validationSchema = z
   .refine((data) => data.password === data.confirm, { message: `Passwords don't match.` });
 
 export default function LockNotePopover() {
-  const [currentNote, addLock] = useNotesStore((state) => [
-    state.byId[state.selectedNoteId],
-    state.addLock,
-  ]);
+  const currentNote = useNotesStore((state) => state.byId[state.selectedNoteId]);
+  const addLock = useNotesStore((state) => state.addLock);
+
   const { isLockPopoverOpen, closeLockPopover } = useUiStore();
+
   const [formState, setFormState] = useState({
     password: '',
     confirm: '',
@@ -30,8 +30,6 @@ export default function LockNotePopover() {
     setFormState({ password: '', confirm: '', error: '', isPristine: true });
     closeLockPopover();
   };
-
-  const containerRef = useOutsideClick(handleClose);
 
   const handleChangePassword = (ev: React.ChangeEvent<HTMLInputElement>) => {
     setFormState((state) => {
@@ -60,10 +58,9 @@ export default function LockNotePopover() {
   if (!isLockPopoverOpen || currentNote.type === 'encrypted') return null;
 
   const showError = !formState.isPristine && formState.error !== '';
-
   return (
-    <div ref={containerRef} className="absolute inset-0">
-      <div className="h-full z-30 grid items-center overflow-y-auto p-8 backdrop-blur-sm backdrop-brightness-75">
+    <div className="absolute inset-0">
+      <div className="h-full z-30 grid items-center overflow-y-auto p-8 bg-zinc-800/95">
         <button
           className="absolute top-4 right-4 w-7 p-2 opacity-50"
           type="button"
@@ -72,8 +69,8 @@ export default function LockNotePopover() {
           <CloseIcon />
         </button>
         <form onSubmit={handleAddLock} className="grid place-items-center gap-4 text-center">
-          <PrivateIcon className={`w-14 ${showError ? 'animate-wiggle' : ''}`} />
-          <h2 className={'capitalize font-semibold ' + (showError ? ' text-red-400' : '')}>
+          <PrivateIcon className={classNames('w-14', { 'animate-wiggle': showError })} />
+          <h2 className={classNames('capitalize font-semibold', { 'text-red-400': showError })}>
             {showError ? formState.error : 'Lock note.'}
           </h2>
           <label htmlFor="current-password" className="grid gap-1">
@@ -84,7 +81,7 @@ export default function LockNotePopover() {
               name="password"
               id="current-password"
               autoComplete="current-password"
-              className="px-2 rounded-md bg-zinc-700"
+              className="px-2 w-52 rounded-md bg-zinc-700"
               value={formState.password}
               onChange={handleChangePassword}
             />
@@ -97,7 +94,7 @@ export default function LockNotePopover() {
               name="confirm"
               id="confirm-password"
               autoComplete="current-password"
-              className={`px-2 rounded-md bg-zinc-700`}
+              className="w-52 px-2 rounded-md bg-zinc-700"
               value={formState.confirm}
               onChange={handleChangePassword}
             />

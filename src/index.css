@@ -8,6 +8,10 @@
     font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
     color-scheme: dark;
   }
+
+  body {
+    overscroll-behavior: contain;
+  }
 }
 @tailwind components;
 @tailwind utilities;

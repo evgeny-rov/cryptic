@@ -5,7 +5,6 @@ import without from 'lodash/without';
 import omit from 'lodash/omit';
 import zipObject from 'lodash/zipObject';
 
-import deriveNoteTitle from '../helpers/derive-note-title';
 import { createKey, decrypt, encrypt, KeyData } from '../../crypto';
 import type { RemoveNameField } from '../types';
 
@@ -51,6 +50,7 @@ interface NotesState {
   createNewNote: () => void;
   selectNote: (id: NoteId) => void;
   changeNoteText: (id: NoteId, text: string) => void;
+  changeNoteTitle: (id: NoteId, title: string) => void;
   deleteNote: (id: NoteId) => void;
 
   addLock: (note: EditableNote, password: string) => Promise<void>;
@@ -64,7 +64,7 @@ interface NotesState {
 const createPlainNote = (): PlainNote => ({
   id: uuidv4(),
   type: 'plain',
-  title: 'Untitled Note',
+  title: '',
   data: '',
 });
 
@@ -128,7 +128,17 @@ export const useNotesStore = create<NotesState>()(
 
         set((state) => ({
           allIds: [id, ...without(state.allIds, id)],
-          byId: { ...state.byId, [id]: { ...note, data: text, title: deriveNoteTitle(text) } },
+          byId: { ...state.byId, [id]: { ...note, data: text } },
+        }));
+      },
+      changeNoteTitle: (id, title) => {
+        const note = get().byId[id];
+
+        if (note.type === 'encrypted') return;
+
+        set((state) => ({
+          allIds: [id, ...without(state.allIds, id)],
+          byId: { ...state.byId, [id]: { ...note, title } },
         }));
       },
       deleteNote: (id) =>
@@ -137,7 +147,11 @@ export const useNotesStore = create<NotesState>()(
 
           const allIds = without(state.allIds, id);
           const byId = omit(state.byId, id);
-          const selectedNoteId = allIds[0];
+
+          const currentNoteIdx = state.allIds.findIndex((noteId) => noteId === id);
+          const replacingIdx = Math.min(currentNoteIdx, allIds.length - 1);
+
+          const selectedNoteId = allIds[replacingIdx];
 
           return { allIds, byId, selectedNoteId };
         }),

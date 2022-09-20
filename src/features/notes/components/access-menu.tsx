@@ -1,7 +1,8 @@
-import useOutsideClick from '../hooks/use-outside-click';
-import TBButton from './tb-button';
-import { ReactComponent as AccessIcon } from '../assets/access.svg';
 import { useState } from 'react';
+import classNames from 'classnames';
+import useOutsideClick from '../hooks/use-outside-click';
+import ToolButton from './tool-button';
+import { ReactComponent as AccessIcon } from '../assets/access.svg';
 import { useNotesStore } from '../stores/notes-store';
 import { useUiStore } from '../stores/ui-store';
 
@@ -15,7 +16,7 @@ export default function AccessMenu({ disabled }: { disabled: boolean }) {
   const toggle = () => setIsMenuOpen((prev) => !prev);
   const close = () => setIsMenuOpen(false);
 
-  const containerRef = useOutsideClick(close);
+  const containerRef = useOutsideClick<HTMLDivElement>(close, isMenuOpen);
 
   const options = ['lock note', 'change password', 'remove lock'] as const;
 
@@ -42,17 +43,25 @@ export default function AccessMenu({ disabled }: { disabled: boolean }) {
 
   return (
     <div className="relative" ref={containerRef}>
-      <TBButton title="Manage Access" disabled={disabled} onClick={toggle}>
+      <ToolButton title="Manage Access" disabled={disabled} onClick={toggle}>
         <AccessIcon />
-      </TBButton>
+      </ToolButton>
       {isMenuOpen && (
-        <div className="absolute -left-14 top-full rounded-md z-20 bg-zinc-900 shadow-md grid overflow-hidden">
+        <div
+          className={classNames(
+            'absolute bottom-full bg-zinc-800 -left-14 rounded-md z-20 shadow-md grid overflow-hidden',
+            'md:bottom-auto md:bg-zinc-900'
+          )}
+        >
           {options.map((option) => (
             <button
               key={option}
               type="button"
               onClick={() => handleOptionClick(option)}
-              className="px-4 py-2 capitalize text-sm text-left opacity-50 hover:opacity-100 focus:opacity-100 whitespace-nowrap"
+              className={classNames(
+                'px-4 py-2 capitalize text-sm text-left opacity-50 whitespace-nowrap',
+                'hover:opacity-100 focus:opacity-100'
+              )}
             >
               {option}
             </button>
