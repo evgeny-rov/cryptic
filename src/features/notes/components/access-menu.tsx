@@ -48,6 +48,7 @@ export default function AccessMenu({ disabled }: { disabled: boolean }) {
           {options.map((option) => (
             <button
               key={option}
+              title={option}
               type="button"
               onClick={() => handleOptionClick(option)}
               className={classNames(

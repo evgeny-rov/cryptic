@@ -1,10 +1,10 @@
+import { useEffect, useRef } from 'react';
+import classNames from 'classnames';
 import { useNotesStore } from '../stores/notes-store';
 import { ReactComponent as PrivateIcon } from '../assets/private.svg';
 import { ReactComponent as AccessIcon } from '../assets/access.svg';
-
-import type { Note } from '../stores/notes-store';
-import classNames from 'classnames';
 import NoteTitle from './note-title';
+import type { Note } from '../stores/notes-store';
 
 const NoteListItem = ({ id }: { id: Note['id'] }) => {
   const currentNote = useNotesStore((state) => state.byId[id]);
@@ -14,6 +14,7 @@ const NoteListItem = ({ id }: { id: Note['id'] }) => {
   return (
     <li>
       <button
+        title="select note"
         type="button"
         className={classNames(
           'flex items-center px-3 py-1 space-x-2 rounded-md w-full opacity-50',
@@ -35,9 +36,20 @@ const NoteListItem = ({ id }: { id: Note['id'] }) => {
 
 export default function NotesList() {
   const notesIds = useNotesStore((state) => state.allIds);
+  const selectedNoteId = useNotesStore((state) => state.selectedNoteId);
+  const listRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    const firstNote = notesIds[0];
+    if (!firstNote || !listRef.current) return;
+
+    const shouldScrollToTop = firstNote === selectedNoteId;
+
+    if (shouldScrollToTop) listRef.current.scrollIntoView({ behavior: 'smooth' });
+  }, [notesIds, selectedNoteId]);
 
   return (
-    <ul>
+    <ul ref={listRef}>
       {notesIds.map((id) => (
         <NoteListItem key={id} id={id} />
       ))}
