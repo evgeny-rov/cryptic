@@ -6,7 +6,7 @@ const getPlaceholderTitle = (note: Note) => {
     return note.title || 'Empty Note';
   }
 
-  return note.title || note.data.slice(0, 100) || 'Empty Note';
+  return note.title || note.data.slice(0, 100) || 'Untitled Note';
 };
 
 export default function NoteTitle({ note, editable }: { note: Note; editable: boolean }) {
@@ -34,7 +34,6 @@ export default function NoteTitle({ note, editable }: { note: Note; editable: bo
         onChange={changeTitle}
         className={classNames(
           'p-1 bg-transparent w-full capitalize whitespace-nowrap text-ellipsis',
-          'placeholder:text-white',
           { 'cursor-pointer': !editable }
         )}
         value={note.title}

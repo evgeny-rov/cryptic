@@ -9,7 +9,9 @@ export default async (note: Note) => {
     day: 'numeric',
   });
 
-  const filename = `${note.title} - ${currentDate}.cryptic`;
+  const name = note.title || 'Untitled Note';
+
+  const filename = `${name} - ${currentDate}.cryptic`;
 
   if (note.type === 'unlocked') {
     const cipher = await encrypt(note.data, note.credentials);

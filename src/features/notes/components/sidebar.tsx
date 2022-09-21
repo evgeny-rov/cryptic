@@ -7,7 +7,7 @@ export default function Sidebar() {
       <div className="flex py-4 justify-evenly">
         <Tools />
       </div>
-      <div className="px-1 overflow-y-auto">
+      <div className="px-2 overflow-y-auto">
         <NotesList />
       </div>
     </div>

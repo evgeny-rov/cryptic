@@ -23,21 +23,13 @@ export default function AccessMenu({ disabled }: { disabled: boolean }) {
   const handleOptionClick = (option: typeof options[number]) => {
     if (currentNote.type !== 'unlocked') return;
 
-    switch (option) {
-      case 'lock note': {
-        lockNote(currentNote);
-        break;
-      }
-      case 'change password': {
-        openLockPopover();
-        break;
-      }
-      case 'remove lock': {
-        removeLock(currentNote);
-        break;
-      }
-    }
+    const handlers: Record<typeof option, Function> = {
+      'lock note': lockNote,
+      'change password': openLockPopover,
+      'remove lock': removeLock,
+    };
 
+    handlers[option](currentNote);
     close();
   };
 

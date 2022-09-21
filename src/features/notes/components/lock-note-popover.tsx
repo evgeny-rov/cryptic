@@ -16,15 +16,15 @@ const validationSchema = z
 export default function LockNotePopover() {
   const currentNote = useNotesStore((state) => state.byId[state.selectedNoteId]);
   const addLock = useNotesStore((state) => state.addLock);
-
   const { isLockPopoverOpen, closeLockPopover } = useUiStore();
-
   const [formState, setFormState] = useState({
     password: '',
     confirm: '',
     error: '',
     isPristine: true,
   });
+
+  useEffect(closeLockPopover, [currentNote]);
 
   const handleClose = () => {
     setFormState({ password: '', confirm: '', error: '', isPristine: true });
@@ -49,8 +49,8 @@ export default function LockNotePopover() {
 
   const handleAddLock = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
-
     if (currentNote.type === 'encrypted') return;
+
     addLock(currentNote, formState.password);
     handleClose();
   };
@@ -68,12 +68,12 @@ export default function LockNotePopover() {
         >
           <CloseIcon />
         </button>
-        <form onSubmit={handleAddLock} className="grid place-items-center gap-4 text-center">
+        <form onSubmit={handleAddLock} className="grid place-items-center space-y-4 text-center">
           <PrivateIcon className={classNames('w-14', { 'animate-wiggle': showError })} />
           <h2 className={classNames('capitalize font-semibold', { 'text-red-400': showError })}>
             {showError ? formState.error : 'Lock note.'}
           </h2>
-          <label htmlFor="current-password" className="grid gap-1">
+          <label htmlFor="current-password" className="grid space-y-1">
             <span>Password:</span>
             <input
               required
@@ -86,7 +86,7 @@ export default function LockNotePopover() {
               onChange={handleChangePassword}
             />
           </label>
-          <label htmlFor="confirm-password" className="grid gap-1">
+          <label htmlFor="confirm-password" className="grid space-y-1">
             <span>Confirm Password:</span>
             <input
               required
