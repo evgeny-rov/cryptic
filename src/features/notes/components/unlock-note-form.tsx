@@ -20,7 +20,7 @@ export default function UnlockNoteForm({ note }: { note: EncryptedNote }) {
 
   return (
     <div className="grid w-full place-items-center overflow-y-auto">
-      <form onSubmit={handleUnlock} className="grid place-items-center gap-4 p-8">
+      <form onSubmit={handleUnlock} className="grid place-items-center space-y-4 p-8">
         <PrivateIcon
           className={classNames('w-14', { 'animate-wiggle': hasError })}
           onAnimationEnd={() => setHasError(false)}
