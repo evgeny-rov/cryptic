@@ -21,7 +21,7 @@ export default function BottomAppbar() {
         <div className="px-4 flex flex-grow">
           <NoteTitle note={currentNote} editable={true} />
         </div>
-        <button className="px-4 py-5" type="button" onClick={toggle}>
+        <button title="menu" className="px-4 py-5" type="button" onClick={toggle}>
           <MenuIcon className="w-5" />
         </button>
       </div>

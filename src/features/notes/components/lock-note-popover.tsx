@@ -58,10 +58,12 @@ export default function LockNotePopover() {
   if (!isLockPopoverOpen || currentNote.type === 'encrypted') return null;
 
   const showError = !formState.isPristine && formState.error !== '';
+
   return (
     <div className="absolute inset-0">
       <div className="h-full z-30 grid items-center overflow-y-auto p-8 bg-zinc-800/95">
         <button
+          title="close"
           className="absolute top-4 right-4 w-7 p-2 opacity-50"
           type="button"
           onClick={handleClose}
@@ -100,6 +102,7 @@ export default function LockNotePopover() {
             />
           </label>
           <button
+            title="lock note"
             disabled={formState.isPristine || formState.error !== ''}
             className="text-sm font-semibold disabled:opacity-25 p-2"
           >
