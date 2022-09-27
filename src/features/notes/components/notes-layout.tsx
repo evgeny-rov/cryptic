@@ -1,8 +1,7 @@
-import NoteContent from './note-content';
-import LockNotePopover from './lock-note-popover';
-import BottomAppbar from './bottom-appbar';
-import Sidebar from './sidebar';
 import classNames from 'classnames';
+import NoteContent from './note-content';
+import Appbar from './appbar';
+import Sidebar from './sidebar';
 
 const Pane = ({ children, className }: { className: string; children: React.ReactNode }) => {
   return (
@@ -19,10 +18,9 @@ export default function NotesLayout() {
         <Sidebar />
       </Pane>
       <Pane className="bg-[#252528] flex relative flex-grow overflow-hidden">
-        <LockNotePopover />
         <NoteContent />
       </Pane>
-      <BottomAppbar />
+      <Appbar />
     </main>
   );
 }

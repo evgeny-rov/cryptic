@@ -1,5 +1,6 @@
 import { useNotesStore } from '../stores/notes-store';
 import UnlockNoteForm from './unlock-note-form';
+import LockNotePopover from './lock-note-popover';
 
 import type { EditableNote } from '../stores/notes-store';
 
@@ -29,5 +30,10 @@ export default function NoteContent() {
     return <UnlockNoteForm note={currentNote} />;
   }
 
-  return <TextEditor note={currentNote} />;
+  return (
+    <>
+      <LockNotePopover />
+      <TextEditor note={currentNote} />
+    </>
+  );
 }

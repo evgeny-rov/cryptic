@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
+import classNames from 'classnames';
 import { z } from 'zod';
 import { useUiStore } from '../stores/ui-store';
 import { useNotesStore } from '../stores/notes-store';
 import { ReactComponent as CloseIcon } from '../assets/close.svg';
 import { ReactComponent as PrivateIcon } from '../assets/private.svg';
-import classNames from 'classnames';
 
 const validationSchema = z
   .object({
@@ -63,8 +63,8 @@ export default function LockNotePopover() {
     <div className="absolute inset-0">
       <div className="h-full z-30 grid items-center overflow-y-auto p-8 bg-zinc-800/95">
         <button
-          title="close"
-          className="absolute top-4 right-4 w-7 p-2 opacity-50"
+          title="Close Lock Popover"
+          className="absolute top-4 right-4 w-6 p-2"
           type="button"
           onClick={handleClose}
         >
@@ -102,9 +102,9 @@ export default function LockNotePopover() {
             />
           </label>
           <button
-            title="lock note"
+            title="Lock Note"
             disabled={formState.isPristine || formState.error !== ''}
-            className="text-sm font-semibold disabled:opacity-25 p-2"
+            className="text-sm font-semibold disabled:text-zinc-600 p-2"
           >
             Lock
           </button>

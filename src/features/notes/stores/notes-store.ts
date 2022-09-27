@@ -137,7 +137,6 @@ export const useNotesStore = create<NotesState>()(
         if (note.type === 'encrypted') return;
 
         set((state) => ({
-          allIds: [id, ...without(state.allIds, id)],
           byId: { ...state.byId, [id]: { ...note, title } },
         }));
       },

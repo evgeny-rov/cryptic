@@ -41,7 +41,7 @@ export default function AccessMenu({ disabled }: { disabled: boolean }) {
       {isMenuOpen && (
         <div
           className={classNames(
-            'absolute bottom-full bg-zinc-800 -left-14 rounded-md z-20 shadow-md grid overflow-hidden',
+            'absolute bottom-full bg-zinc-800 -left-14 rounded-md z-20 shadow-md grid',
             'md:bottom-auto md:bg-zinc-900'
           )}
         >
@@ -52,8 +52,8 @@ export default function AccessMenu({ disabled }: { disabled: boolean }) {
               type="button"
               onClick={() => handleOptionClick(option)}
               className={classNames(
-                'px-4 py-2 capitalize text-sm text-left opacity-50 whitespace-nowrap',
-                'hover:opacity-100 focus:opacity-100'
+                'px-4 py-2 capitalize text-sm text-left whitespace-nowrap',
+                'text-zinc-400 hover:text-current focus:text-current'
               )}
             >
               {option}

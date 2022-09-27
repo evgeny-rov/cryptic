@@ -37,7 +37,7 @@ export default function UnlockNoteForm({ note }: { note: EncryptedNote }) {
           value={password}
           onChange={(ev) => setPassword(ev.target.value)}
         />
-        <button title="unlock note" className="text-sm font-semibold disabled:opacity-25">
+        <button title="unlock note" className="text-sm font-semibold">
           Unlock
         </button>
       </form>
