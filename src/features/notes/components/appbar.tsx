@@ -35,7 +35,7 @@ export default function BottomAppbar() {
         </button>
       </div>
       {isExpanded && (
-        <div className="px-2 overflow-y-auto">
+        <div className="px-2 supports-gutter:gutter-both supports-gutter:px-1 overflow-y-auto">
           <NotesList />
         </div>
       )}

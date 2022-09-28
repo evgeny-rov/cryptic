@@ -13,7 +13,12 @@ const Pane = ({ children, className }: { className: string; children: React.Reac
 
 export default function NotesLayout() {
   return (
-    <main className="relative overflow-hidden w-full h-full flex flex-col xl:space-x-1 md:flex-row xl:w-[64rem] xl:h-[45rem]">
+    <main
+      className={classNames(
+        'relative overflow-hidden w-full h-full flex flex-col',
+        'md:flex-row xl:space-x-1 xl:w-[64rem] xl:h-[45rem]'
+      )}
+    >
       <Pane className="bg-[#202023] w-60 overflow-hidden hidden md:block">
         <Sidebar />
       </Pane>
