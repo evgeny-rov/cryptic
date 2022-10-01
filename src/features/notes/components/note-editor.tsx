@@ -9,7 +9,7 @@ export default function NoteEditor({ note }: { note: EditableNote }) {
       value={note.data}
       onChange={(ev) => changeNoteText(note.id, ev.target.value)}
       spellCheck="true"
-      className="w-full h-full p-4 bg-transparent outline-none resize-none"
+      className="w-full flex-grow p-4 bg-transparent outline-none resize-none"
     />
   );
 }
