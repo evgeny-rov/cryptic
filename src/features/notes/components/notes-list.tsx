@@ -24,12 +24,9 @@ const NoteListItem = ({
 
   return (
     <li
-      className={classNames(
-        'relative group text-zinc-400 hover:text-current focus-within:text-current',
-        {
-          'text-current': isSelected,
-        }
-      )}
+      className={classNames('relative text-zinc-400 hover:text-current', {
+        'text-current': isSelected,
+      })}
     >
       {isSelected && <div className="absolute inset-0 bg-zinc-800 rounded-md" />}
 

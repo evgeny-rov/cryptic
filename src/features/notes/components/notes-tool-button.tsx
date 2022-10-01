@@ -16,7 +16,7 @@ export default function ToolButton({
       type="button"
       disabled={disabled}
       className={classNames(
-        'px-[0.4rem] w-7 h-7 grid place-items-center text-zinc-400',
+        'py-3 px-2 flex items-center text-zinc-400',
         'hover:text-current focus:text-current disabled:text-zinc-700'
       )}
       title={title}

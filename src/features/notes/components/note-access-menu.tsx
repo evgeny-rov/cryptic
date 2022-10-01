@@ -1,16 +1,18 @@
-import { useState } from 'react';
 import classNames from 'classnames';
-import useOutsideClick from '../hooks/use-outside-click';
-import ToolButton from './tool-button';
+import { useState } from 'react';
+import { useAtom } from 'jotai';
 import { ReactComponent as AccessIcon } from '../assets/access.svg';
-import { useNotesStore } from '../stores/notes-store';
-import { useUiStore } from '../stores/ui-store';
+import useOutsideClick from '../hooks/use-outside-click';
+import ToolButton from './notes-tool-button';
 
-export default function AccessMenu({ disabled }: { disabled: boolean }) {
+import { UnlockedNote, useNotesStore } from '../stores/notes-store';
+import { lockingStateAtom } from '../stores/ui-atoms';
+
+export default function NoteAccessMenu({ disabled }: { disabled: boolean }) {
   const currentNote = useNotesStore((state) => state.byId[state.selectedNoteId]);
   const removeLock = useNotesStore((state) => state.removeLock);
-  const openLockPopover = useUiStore((state) => state.openLockPopover);
   const lockNote = useNotesStore((state) => state.lockNote);
+  const [, setIsLocking] = useAtom(lockingStateAtom);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggle = () => setIsMenuOpen((prev) => !prev);
@@ -23,9 +25,9 @@ export default function AccessMenu({ disabled }: { disabled: boolean }) {
   const handleOptionClick = (option: typeof options[number]) => {
     if (currentNote.type !== 'unlocked') return;
 
-    const handlers: Record<typeof option, Function> = {
+    const handlers: Record<typeof option, (note: UnlockedNote) => void> = {
       'lock note': lockNote,
-      'change password': openLockPopover,
+      'change password': () => setIsLocking(true),
       'remove lock': removeLock,
     };
 
@@ -36,7 +38,7 @@ export default function AccessMenu({ disabled }: { disabled: boolean }) {
   return (
     <div className="relative" ref={containerRef}>
       <ToolButton title="Manage Access" disabled={disabled} onClick={toggle}>
-        <AccessIcon />
+        <AccessIcon className="h-4 w-4" />
       </ToolButton>
       {isMenuOpen && (
         <div

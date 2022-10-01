@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
 import classNames from 'classnames';
+import { useState } from 'react';
+import { useAtom } from 'jotai';
 import { z } from 'zod';
-import { useUiStore } from '../stores/ui-store';
-import { useNotesStore } from '../stores/notes-store';
+import { EditableNote, useNotesStore } from '../stores/notes-store';
 import { ReactComponent as CloseIcon } from '../assets/close.svg';
 import { ReactComponent as PrivateIcon } from '../assets/private.svg';
+import { lockingStateAtom } from '../stores/ui-atoms';
 
 const validationSchema = z
   .object({
@@ -13,10 +14,9 @@ const validationSchema = z
   })
   .refine((data) => data.password === data.confirm, { message: `Passwords don't match.` });
 
-export default function LockNotePopover() {
-  const currentNote = useNotesStore((state) => state.byId[state.selectedNoteId]);
+export default function NoteLock({ note }: { note: EditableNote }) {
+  const [, setIsLocking] = useAtom(lockingStateAtom);
   const addLock = useNotesStore((state) => state.addLock);
-  const { isLockPopoverOpen, closeLockPopover } = useUiStore();
   const [formState, setFormState] = useState({
     password: '',
     confirm: '',
@@ -24,11 +24,8 @@ export default function LockNotePopover() {
     isPristine: true,
   });
 
-  useEffect(closeLockPopover, [currentNote]);
-
   const handleClose = () => {
-    setFormState({ password: '', confirm: '', error: '', isPristine: true });
-    closeLockPopover();
+    setIsLocking(false);
   };
 
   const handleChangePassword = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,13 +46,10 @@ export default function LockNotePopover() {
 
   const handleAddLock = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
-    if (currentNote.type === 'encrypted') return;
 
-    addLock(currentNote, formState.password);
+    addLock(note, formState.password);
     handleClose();
   };
-
-  if (!isLockPopoverOpen || currentNote.type === 'encrypted') return null;
 
   const showError = !formState.isPristine && formState.error !== '';
 

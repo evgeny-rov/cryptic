@@ -25,12 +25,11 @@ export default function NoteTitle({ value, disabled, onChange, placeholder }: Pr
         disabled={disabled}
         placeholder={placeholder}
         onChange={(ev) => onChange(ev.target.value)}
-        className={classNames(
-          'p-1 py-2 bg-transparent rounded-md w-full capitalize text-ellipsis text-current',
-          'placeholder:italic placeholder:text-zinc-500 group-hover:placeholder:text-current',
-          'group-focus-within:placeholder:text-current'
-        )}
         value={value}
+        className={classNames(
+          'p-1 py-2 bg-transparent rounded-md w-full capitalize text-ellipsis text-current outline-none',
+          'placeholder:italic placeholder:text-zinc-500'
+        )}
       />
     </form>
   );
