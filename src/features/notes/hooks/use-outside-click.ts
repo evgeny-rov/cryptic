@@ -5,7 +5,6 @@ export default <T extends HTMLElement>(callback: () => void, shouldListen = true
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
-      console.log('click');
       if (!ref.current) return;
       const target = event.target as Node;
       const isClickedOutside = !ref.current.contains(target);

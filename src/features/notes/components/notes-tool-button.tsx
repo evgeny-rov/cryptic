@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 export default function ToolButton({
   title,
@@ -15,7 +15,7 @@ export default function ToolButton({
     <button
       type="button"
       disabled={disabled}
-      className={classNames(
+      className={clsx(
         'py-3 px-2 flex items-center text-zinc-400',
         'hover:text-current focus:text-current disabled:text-zinc-700'
       )}

@@ -1,5 +1,5 @@
-import classNames from 'classnames';
 import { useState } from 'react';
+import clsx from 'clsx';
 import { ReactComponent as PrivateIcon } from '../assets/private.svg';
 import { EncryptedNote, useNotesStore } from '../stores/notes-store';
 
@@ -22,7 +22,7 @@ export default function NoteUnlock({ note }: { note: EncryptedNote }) {
     <div className="grid w-full h-full place-items-center overflow-y-auto">
       <form onSubmit={handleUnlock} className="grid place-items-center space-y-4 p-8">
         <PrivateIcon
-          className={classNames('w-14', { 'animate-wiggle': hasError })}
+          className={clsx('w-14', hasError && 'animate-wiggle')}
           onAnimationEnd={() => setHasError(false)}
         />
         <h2 className="font-semibold text-lg capitalize">This note is locked.</h2>

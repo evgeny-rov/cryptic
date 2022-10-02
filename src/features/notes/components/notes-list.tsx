@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactComponent as PrivateIcon } from '../assets/private.svg';
 import { ReactComponent as AccessIcon } from '../assets/access.svg';
 import { useNotesStore } from '../stores/notes-store';
@@ -24,19 +24,11 @@ const NoteListItem = ({
 
   return (
     <li
-      className={classNames('relative text-zinc-400 hover:text-current', {
-        'text-current': isSelected,
-      })}
+      className={clsx(
+        'relative rounded-md text-zinc-400 hover:text-current',
+        isSelected && 'text-current bg-zinc-800'
+      )}
     >
-      {isSelected && <div className="absolute inset-0 bg-zinc-800 rounded-md" />}
-
-      <button
-        title="Select Note"
-        type="button"
-        onClick={selectNote}
-        className={classNames('absolute w-full inset-0 rounded-md', { 'z-10': !isSelected })}
-      />
-
       <div className="relative flex">
         <div className="relative px-2 w-7 grid place-items-center text-md text-center">
           {note.type === 'plain' && <span>{'•'}</span>}
@@ -44,10 +36,11 @@ const NoteListItem = ({
           {note.type === 'encrypted' && <PrivateIcon />}
         </div>
         <NoteTitle
+          onClick={selectNote}
           value={note.title}
           onChange={handleChangeTitle}
           placeholder={derivePlaceholderTitle(note)}
-          disabled={!isSelected || note.type === 'encrypted'}
+          readonly={!isSelected || note.type === 'encrypted'}
         />
       </div>
     </li>

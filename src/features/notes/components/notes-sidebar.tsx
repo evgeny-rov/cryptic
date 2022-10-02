@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useAtom } from 'jotai';
 import useOutsideClick from '../hooks/use-outside-click';
 import { sidebarStateAtom } from '../stores/ui-atoms';
@@ -13,9 +13,9 @@ export default function NotesSidebar() {
   return (
     <div
       ref={containerRef}
-      className={classNames(
+      className={clsx(
         'bg-zinc-800/30 w-60 flex-shrink-0 flex flex-col',
-        { hidden: !isExpanded },
+        !isExpanded && 'hidden',
         'md:flex xl:mr-1 xl:rounded-md xl:border-2 xl:border-zinc-800'
       )}
     >
@@ -23,7 +23,7 @@ export default function NotesSidebar() {
         <NotesTools />
       </div>
       <div
-        className={classNames(
+        className={clsx(
           'px-2 overflow-y-auto app-scrollbar',
           'supports-gutter:gutter-both supports-gutter:px-1'
         )}

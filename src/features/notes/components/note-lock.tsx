@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useState } from 'react';
 import { useAtom } from 'jotai';
 import { z } from 'zod';
@@ -65,8 +65,8 @@ export default function NoteLock({ note }: { note: EditableNote }) {
           <CloseIcon />
         </button>
         <form onSubmit={handleAddLock} className="grid place-items-center space-y-4 text-center">
-          <PrivateIcon className={classNames('w-14', { 'animate-wiggle': showError })} />
-          <h2 className={classNames('capitalize font-semibold', { 'text-red-400': showError })}>
+          <PrivateIcon className={clsx('w-14', showError && 'animate-wiggle')} />
+          <h2 className={clsx('capitalize font-semibold', showError && 'text-red-400')}>
             {showError ? formState.error : 'Lock note.'}
           </h2>
           <label htmlFor="current-password" className="grid space-y-1">
