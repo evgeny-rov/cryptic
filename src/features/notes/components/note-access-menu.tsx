@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { useAtom } from 'jotai';
@@ -41,10 +42,12 @@ export default function NoteAccessMenu({ disabled }: { disabled: boolean }) {
         <AccessIcon className="h-4 w-4" />
       </ToolButton>
       {isMenuOpen && (
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: -2 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
           className={clsx(
-            'absolute bottom-full bg-zinc-800 -left-14 rounded-md z-20 shadow-md grid',
-            'md:bottom-auto md:bg-zinc-900'
+            'absolute bg-zinc-900 border border-zinc-800 -left-14 rounded-md z-20 shadow-xl grid'
           )}
         >
           {options.map((option) => (
@@ -54,14 +57,14 @@ export default function NoteAccessMenu({ disabled }: { disabled: boolean }) {
               type="button"
               onClick={() => handleOptionClick(option)}
               className={clsx(
-                'px-4 py-2 capitalize text-sm text-left whitespace-nowrap',
+                'px-4 py-2 transition-colors capitalize text-sm text-left whitespace-nowrap',
                 'text-zinc-400 hover:text-current focus:text-current'
               )}
             >
               {option}
             </button>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

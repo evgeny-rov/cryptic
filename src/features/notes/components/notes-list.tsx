@@ -29,14 +29,14 @@ const NoteListItem = ({
         isSelected && 'text-current bg-zinc-800'
       )}
     >
-      <div className="relative flex">
-        <div className="relative px-2 w-7 grid place-items-center text-md text-center">
+      <div className="relative flex pl-2 space-x-1 transition-colors">
+        <div className="relative w-3 grid place-items-center text-md text-center">
           {note.type === 'plain' && <span>{'•'}</span>}
           {note.type === 'unlocked' && <AccessIcon />}
           {note.type === 'encrypted' && <PrivateIcon />}
         </div>
         <NoteTitle
-          onClick={selectNote}
+          onFocus={selectNote}
           value={note.title}
           onChange={handleChangeTitle}
           placeholder={derivePlaceholderTitle(note)}
@@ -57,9 +57,9 @@ export default function NotesList() {
     const firstNote = notesIds[0];
     if (!firstNote || !listRef.current) return;
 
-    const shouldScrollToTop = firstNote === selectedNoteId;
+    const isNewNoteAdded = firstNote === selectedNoteId;
 
-    if (shouldScrollToTop) listRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (isNewNoteAdded) listRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [notesIds, selectedNoteId]);
 
   return (

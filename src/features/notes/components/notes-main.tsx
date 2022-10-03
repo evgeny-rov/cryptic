@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import NoteEditor from './note-editor';
 import NoteUnlock from './note-unlock';
@@ -9,9 +8,7 @@ import { lockingStateAtom } from '../stores/ui-atoms';
 
 export default function NotesMain() {
   const note = useNotesStore((state) => state.byId[state.selectedNoteId]);
-  const [isLocking, setIsLocking] = useAtom(lockingStateAtom);
-
-  useEffect(() => setIsLocking(false), [note]);
+  const [isLocking] = useAtom(lockingStateAtom);
 
   return (
     <main className="bg-zinc-800 flex flex-col relative flex-grow overflow-hidden shadow-lg xl:rounded-md">

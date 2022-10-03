@@ -30,23 +30,23 @@ export default function NotesTools() {
   return (
     <>
       <NotesTB title="Create Note" onClick={createNewNote}>
-        <CreateIcon className="h-4 w-4" />
+        <CreateIcon className="w-4 h-4" />
       </NotesTB>
       <NotesTB title="Remove Note" onClick={deleteCurrentNote}>
-        <RemoveIcon className="h-4 w-4" />
+        <RemoveIcon className="w-4 h-4" />
       </NotesTB>
       {currentNote.type === 'plain' ? (
         <NotesTB title="Lock Note" onClick={toggleLocking}>
-          <LockIcon className="h-4 w-4" />
+          <LockIcon className="w-4 h-4" />
         </NotesTB>
       ) : (
         <NoteAccessMenu disabled={currentNote.type === 'encrypted'} />
       )}
       <NotesTB title="Import Notes" onClick={handleImportNotes}>
-        <ImportIcon className="h-4 w-4" />
+        <ImportIcon className="w-4 h-4" />
       </NotesTB>
       <NotesTB title="Export Note" onClick={() => exportNote(currentNote)}>
-        <ExportIcon className="h-4 w-4" />
+        <ExportIcon className="w-4 h-4" />
       </NotesTB>
     </>
   );

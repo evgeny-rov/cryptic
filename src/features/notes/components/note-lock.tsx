@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useAtom } from 'jotai';
 import { z } from 'zod';
@@ -6,6 +7,7 @@ import { EditableNote, useNotesStore } from '../stores/notes-store';
 import { ReactComponent as CloseIcon } from '../assets/close.svg';
 import { ReactComponent as PrivateIcon } from '../assets/private.svg';
 import { lockingStateAtom } from '../stores/ui-atoms';
+import useOutsideClick from '../hooks/use-outside-click';
 
 const validationSchema = z
   .object({
@@ -21,40 +23,38 @@ export default function NoteLock({ note }: { note: EditableNote }) {
     password: '',
     confirm: '',
     error: '',
-    isPristine: true,
   });
 
   const handleClose = () => {
     setIsLocking(false);
   };
 
+  const containerRef = useOutsideClick<HTMLDivElement>(handleClose);
+
   const handleChangePassword = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    setFormState((state) => {
-      const newState = { ...state, [ev.target.name]: ev.target.value };
-      const validationResult = validationSchema.safeParse(newState);
-
-      const error = !validationResult.success ? validationResult.error.issues[0].message : '';
-      const isPristine = newState.password === '' && newState.confirm === '';
-
-      return {
-        ...newState,
-        isPristine,
-        error,
-      };
-    });
+    setFormState((state) => ({ ...state, [ev.target.name]: ev.target.value }));
   };
 
   const handleAddLock = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
+    const validation = validationSchema.safeParse(formState);
 
-    addLock(note, formState.password);
-    handleClose();
+    if (validation.success) {
+      handleClose();
+      addLock(note, formState.password);
+      return;
+    }
+
+    setFormState((state) => ({ ...state, error: validation.error.issues[0].message }));
   };
 
-  const showError = !formState.isPristine && formState.error !== '';
-
   return (
-    <div className="absolute inset-0">
+    <motion.div
+      ref={containerRef}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="absolute inset-0"
+    >
       <div className="h-full z-30 grid items-center overflow-y-auto p-8 bg-zinc-800/95">
         <button
           title="Close Lock Popover"
@@ -64,15 +64,20 @@ export default function NoteLock({ note }: { note: EditableNote }) {
         >
           <CloseIcon />
         </button>
-        <form onSubmit={handleAddLock} className="grid place-items-center space-y-4 text-center">
-          <PrivateIcon className={clsx('w-14', showError && 'animate-wiggle')} />
-          <h2 className={clsx('capitalize font-semibold', showError && 'text-red-400')}>
-            {showError ? formState.error : 'Lock note.'}
+        <motion.form
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+          onSubmit={handleAddLock}
+          className="grid place-items-center space-y-4 text-center"
+        >
+          <PrivateIcon className={clsx('w-14', formState.error && 'animate-wiggle')} />
+          <h2 className={clsx('capitalize font-semibold', formState.error && 'text-red-400')}>
+            {formState.error ? formState.error : 'Lock note.'}
           </h2>
           <label htmlFor="current-password" className="grid space-y-1">
             <span>Password:</span>
             <input
-              required
               type="password"
               name="password"
               id="current-password"
@@ -85,7 +90,6 @@ export default function NoteLock({ note }: { note: EditableNote }) {
           <label htmlFor="confirm-password" className="grid space-y-1">
             <span>Confirm Password:</span>
             <input
-              required
               type="password"
               name="confirm"
               id="confirm-password"
@@ -95,15 +99,11 @@ export default function NoteLock({ note }: { note: EditableNote }) {
               onChange={handleChangePassword}
             />
           </label>
-          <button
-            title="Lock Note"
-            disabled={formState.isPristine || formState.error !== ''}
-            className="text-sm font-semibold disabled:text-zinc-600 p-2"
-          >
+          <button title="Lock Note" className="text-sm font-semibold p-2">
             Lock
           </button>
-        </form>
+        </motion.form>
       </div>
-    </div>
+    </motion.div>
   );
 }
