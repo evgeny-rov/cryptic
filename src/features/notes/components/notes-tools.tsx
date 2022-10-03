@@ -1,3 +1,4 @@
+import { useAtom } from 'jotai';
 import { ReactComponent as CreateIcon } from '../assets/create.svg';
 import { ReactComponent as ImportIcon } from '../assets/import.svg';
 import { ReactComponent as ExportIcon } from '../assets/export.svg';
@@ -5,19 +6,21 @@ import { ReactComponent as RemoveIcon } from '../assets/remove.svg';
 import { ReactComponent as LockIcon } from '../assets/lock.svg';
 
 import { useNotesStore } from '../stores/notes-store';
-import { useUiStore } from '../stores/ui-store';
+import { lockingStateAtom } from '../stores/ui-atoms';
 
 import promptImportNotes from '../helpers/prompt-import-notes';
 import exportNote from '../helpers/export-note';
-import AccessMenu from './access-menu';
-import ToolButton from './tool-button';
+import NoteAccessMenu from './note-access-menu';
+import NotesTB from './notes-tool-button';
 
-export default function Tools() {
+export default function NotesTools() {
   const currentNote = useNotesStore((state) => state.byId[state.selectedNoteId]);
   const createNewNote = useNotesStore((state) => state.createNewNote);
   const deleteCurrentNote = useNotesStore((state) => () => state.deleteNote(currentNote.id));
   const importNotes = useNotesStore((state) => state.importNotes);
-  const toggleLockPopover = useUiStore((state) => state.toggleLockPopover);
+  const [, setIsLocking] = useAtom(lockingStateAtom);
+
+  const toggleLocking = () => setIsLocking((state) => !state);
 
   const handleImportNotes = async () => {
     const parsedNotes = await promptImportNotes();
@@ -26,25 +29,25 @@ export default function Tools() {
 
   return (
     <>
-      <ToolButton title="Create Note" onClick={createNewNote}>
-        <CreateIcon />
-      </ToolButton>
-      <ToolButton title="Remove Note" onClick={deleteCurrentNote}>
-        <RemoveIcon />
-      </ToolButton>
+      <NotesTB title="Create Note" onClick={createNewNote}>
+        <CreateIcon className="w-4 h-4" />
+      </NotesTB>
+      <NotesTB title="Remove Note" onClick={deleteCurrentNote}>
+        <RemoveIcon className="w-4 h-4" />
+      </NotesTB>
       {currentNote.type === 'plain' ? (
-        <ToolButton title="Lock Note" onClick={toggleLockPopover}>
-          <LockIcon />
-        </ToolButton>
+        <NotesTB title="Lock Note" onClick={toggleLocking}>
+          <LockIcon className="w-4 h-4" />
+        </NotesTB>
       ) : (
-        <AccessMenu disabled={currentNote.type === 'encrypted'} />
+        <NoteAccessMenu disabled={currentNote.type === 'encrypted'} />
       )}
-      <ToolButton title="Import Notes" onClick={handleImportNotes}>
-        <ImportIcon />
-      </ToolButton>
-      <ToolButton title="Export Note" onClick={() => exportNote(currentNote)}>
-        <ExportIcon />
-      </ToolButton>
+      <NotesTB title="Import Notes" onClick={handleImportNotes}>
+        <ImportIcon className="w-4 h-4" />
+      </NotesTB>
+      <NotesTB title="Export Note" onClick={() => exportNote(currentNote)}>
+        <ExportIcon className="w-4 h-4" />
+      </NotesTB>
     </>
   );
 }

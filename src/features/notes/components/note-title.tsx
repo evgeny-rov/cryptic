@@ -1,42 +1,37 @@
-import { Note, useNotesStore } from '../stores/notes-store';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
-const getPlaceholderTitle = (note: Note) => {
-  if (note.type === 'encrypted') {
-    return note.title || 'Empty Note';
-  }
+interface Props {
+  onFocus?: () => void;
+  value: string;
+  readonly: boolean;
+  placeholder: string;
+  onChange: (text: string) => void;
+}
 
-  return note.title || note.data.slice(0, 100) || 'Untitled Note';
+const handleClearFocus = (ev: React.FormEvent<HTMLFormElement>) => {
+  ev.preventDefault();
+
+  ev.currentTarget.contains(document.activeElement) &&
+    document.activeElement instanceof HTMLElement &&
+    document.activeElement.blur();
 };
 
-export default function NoteTitle({ note, editable }: { note: Note; editable: boolean }) {
-  const changeTitle = useNotesStore(
-    (state) => (ev: React.ChangeEvent<HTMLInputElement>) =>
-      state.changeNoteTitle(note.id, ev.target.value)
-  );
-
-  const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
-    ev.preventDefault();
-
-    ev.currentTarget.contains(document.activeElement) &&
-      document.activeElement instanceof HTMLElement &&
-      document.activeElement.blur();
-  };
-
+export default function NoteTitle({ value, readonly, onChange, placeholder, onFocus }: Props) {
   return (
-    <form className="w-full" onSubmit={handleSubmit}>
+    <form className="w-full" onSubmit={handleClearFocus}>
       <input
         type="text"
         aria-label="note title"
         enterKeyHint="done"
-        disabled={!editable || note.type === 'encrypted'}
-        placeholder={getPlaceholderTitle(note)}
-        onChange={changeTitle}
-        className={classNames(
-          'p-1 bg-transparent w-full capitalize whitespace-nowrap text-ellipsis',
-          { 'cursor-pointer': !editable }
+        onFocus={onFocus}
+        placeholder={placeholder}
+        onChange={(ev) => onChange(ev.target.value)}
+        readOnly={readonly}
+        value={value}
+        className={clsx(
+          'p-1 py-2 bg-transparent rounded-md w-full capitalize text-ellipsis text-current outline-none',
+          'placeholder:italic placeholder:text-zinc-500 read-only:cursor-pointer'
         )}
-        value={note.title}
       />
     </form>
   );

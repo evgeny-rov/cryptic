@@ -6,7 +6,10 @@ import omit from 'lodash/omit';
 import zipObject from 'lodash/zipObject';
 
 import { createKey, decrypt, encrypt, KeyData } from '../../crypto';
-import type { RemoveNameField } from '../types';
+
+type RemoveNameField<Type, Keys> = {
+  [Property in keyof Type as Exclude<Property, Keys>]: Type[Property];
+};
 
 type NoteId = string;
 type NoteType = 'plain' | 'unlocked' | 'encrypted';
@@ -137,7 +140,6 @@ export const useNotesStore = create<NotesState>()(
         if (note.type === 'encrypted') return;
 
         set((state) => ({
-          allIds: [id, ...without(state.allIds, id)],
           byId: { ...state.byId, [id]: { ...note, title } },
         }));
       },

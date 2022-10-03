@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 export default function ToolButton({
   title,
   onClick,
@@ -13,7 +15,10 @@ export default function ToolButton({
     <button
       type="button"
       disabled={disabled}
-      className="px-[0.4rem] w-7 h-7 grid place-items-center opacity-50 hover:opacity-100 disabled:opacity-10 focus:opacity-100"
+      className={clsx(
+        'py-3 px-2 flex items-center text-zinc-400',
+        'hover:text-current focus:text-current disabled:text-zinc-700'
+      )}
       title={title}
       onClick={onClick}
     >

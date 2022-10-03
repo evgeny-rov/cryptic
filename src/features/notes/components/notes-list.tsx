@@ -1,41 +1,55 @@
 import { useEffect, useRef } from 'react';
-import classNames from 'classnames';
-import { useNotesStore } from '../stores/notes-store';
+import clsx from 'clsx';
 import { ReactComponent as PrivateIcon } from '../assets/private.svg';
 import { ReactComponent as AccessIcon } from '../assets/access.svg';
+import { useNotesStore } from '../stores/notes-store';
 import NoteTitle from './note-title';
+import derivePlaceholderTitle from '../helpers/derive-placeholder-title';
+
 import type { Note } from '../stores/notes-store';
 
-const NoteListItem = ({ id }: { id: Note['id'] }) => {
-  const currentNote = useNotesStore((state) => state.byId[id]);
-  const isSelected = useNotesStore((state) => state.selectedNoteId === id);
+const NoteListItem = ({
+  id,
+  note,
+  isSelected,
+}: {
+  id: Note['id'];
+  note: Note;
+  isSelected: boolean;
+}) => {
   const selectNote = useNotesStore((state) => () => state.selectNote(id));
+  const changeTitle = useNotesStore((state) => state.changeNoteTitle);
+
+  const handleChangeTitle = (text: string) => changeTitle(note.id, text);
 
   return (
-    <li>
-      <button
-        title="select note"
-        type="button"
-        className={classNames(
-          'flex items-center px-3 py-1 space-x-2 rounded-md w-full opacity-50',
-          'hover:opacity-100 focus-visible:opacity-100',
-          { 'bg-zinc-800 opacity-100': isSelected }
-        )}
-        onClick={selectNote}
-      >
-        <div className="w-3 grid place-items-center text-md text-center">
-          {currentNote.type === 'plain' && <span>{'•'}</span>}
-          {currentNote.type === 'unlocked' && <AccessIcon />}
-          {currentNote.type === 'encrypted' && <PrivateIcon />}
+    <li
+      className={clsx(
+        'relative rounded-md text-zinc-400 hover:text-current',
+        isSelected && 'text-current bg-zinc-800'
+      )}
+    >
+      <div className="relative flex pl-2 space-x-1 transition-colors">
+        <div className="relative w-3 grid place-items-center text-md text-center">
+          {note.type === 'plain' && <span>{'•'}</span>}
+          {note.type === 'unlocked' && <AccessIcon />}
+          {note.type === 'encrypted' && <PrivateIcon />}
         </div>
-        <NoteTitle note={currentNote} editable={isSelected} />
-      </button>
+        <NoteTitle
+          onFocus={selectNote}
+          value={note.title}
+          onChange={handleChangeTitle}
+          placeholder={derivePlaceholderTitle(note)}
+          readonly={!isSelected || note.type === 'encrypted'}
+        />
+      </div>
     </li>
   );
 };
 
 export default function NotesList() {
   const notesIds = useNotesStore((state) => state.allIds);
+  const notes = useNotesStore((state) => state.byId);
   const selectedNoteId = useNotesStore((state) => state.selectedNoteId);
   const listRef = useRef<HTMLUListElement>(null);
 
@@ -43,15 +57,15 @@ export default function NotesList() {
     const firstNote = notesIds[0];
     if (!firstNote || !listRef.current) return;
 
-    const shouldScrollToTop = firstNote === selectedNoteId;
+    const isNewNoteAdded = firstNote === selectedNoteId;
 
-    if (shouldScrollToTop) listRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (isNewNoteAdded) listRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [notesIds, selectedNoteId]);
 
   return (
     <ul ref={listRef}>
       {notesIds.map((id) => (
-        <NoteListItem key={id} id={id} />
+        <NoteListItem key={id} id={id} note={notes[id]} isSelected={id === selectedNoteId} />
       ))}
     </ul>
   );
