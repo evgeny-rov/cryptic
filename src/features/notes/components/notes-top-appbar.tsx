@@ -22,7 +22,7 @@ export default function NotesTopAppbar() {
         value={currentNote.title}
         onChange={handleChangeTitle}
         placeholder={derivePlaceholderTitle(currentNote)}
-        readonly={currentNote.type === 'encrypted'}
+        disabled={currentNote.type === 'encrypted'}
       />
     </div>
   );
