@@ -24,11 +24,14 @@ const NoteListItem = ({
 
   return (
     <li
+      onClick={selectNote}
       className={clsx(
         'relative rounded-md text-zinc-400 hover:text-current',
         isSelected && 'text-current bg-zinc-800'
       )}
     >
+      <button className="absolute inset-[2px] rounded-md" />
+
       <div className="relative flex pl-2 space-x-1 transition-colors">
         <div className="relative w-3 grid place-items-center text-md text-center">
           {note.type === 'plain' && <span>{'•'}</span>}
@@ -36,11 +39,10 @@ const NoteListItem = ({
           {note.type === 'encrypted' && <PrivateIcon />}
         </div>
         <NoteTitle
-          onFocus={selectNote}
           value={note.title}
           onChange={handleChangeTitle}
           placeholder={derivePlaceholderTitle(note)}
-          readonly={!isSelected || note.type === 'encrypted'}
+          disabled={!isSelected || note.type === 'encrypted'}
         />
       </div>
     </li>

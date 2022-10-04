@@ -1,9 +1,8 @@
 import clsx from 'clsx';
 
 interface Props {
-  onFocus?: () => void;
   value: string;
-  readonly: boolean;
+  disabled: boolean;
   placeholder: string;
   onChange: (text: string) => void;
 }
@@ -16,17 +15,16 @@ const handleClearFocus = (ev: React.FormEvent<HTMLFormElement>) => {
     document.activeElement.blur();
 };
 
-export default function NoteTitle({ value, readonly, onChange, placeholder, onFocus }: Props) {
+export default function NoteTitle({ value, disabled, onChange, placeholder }: Props) {
   return (
     <form className="w-full" onSubmit={handleClearFocus}>
       <input
         type="text"
         aria-label="note title"
         enterKeyHint="done"
-        onFocus={onFocus}
         placeholder={placeholder}
         onChange={(ev) => onChange(ev.target.value)}
-        readOnly={readonly}
+        disabled={disabled}
         value={value}
         className={clsx(
           'p-1 py-2 bg-transparent rounded-md w-full capitalize text-ellipsis text-current outline-none',
