@@ -5,6 +5,7 @@ interface Props {
   disabled: boolean;
   placeholder: string;
   onChange: (text: string) => void;
+  isSelected?: boolean;
 }
 
 const handleClearFocus = (ev: React.FormEvent<HTMLFormElement>) => {
@@ -15,7 +16,13 @@ const handleClearFocus = (ev: React.FormEvent<HTMLFormElement>) => {
     document.activeElement.blur();
 };
 
-export default function NoteTitle({ value, disabled, onChange, placeholder }: Props) {
+export default function NoteTitle({
+  value,
+  disabled,
+  onChange,
+  placeholder,
+  isSelected = false,
+}: Props) {
   return (
     <form className="w-full" onSubmit={handleClearFocus}>
       <input
@@ -28,7 +35,8 @@ export default function NoteTitle({ value, disabled, onChange, placeholder }: Pr
         value={value}
         className={clsx(
           'p-1 py-2 bg-transparent rounded-md w-full capitalize text-ellipsis text-current outline-none',
-          'placeholder:italic placeholder:text-zinc-500 read-only:cursor-pointer'
+          'placeholder:italic placeholder:text-zinc-500 read-only:cursor-pointer',
+          !isSelected && 'cursor-pointer'
         )}
       />
     </form>

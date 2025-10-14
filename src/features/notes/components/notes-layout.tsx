@@ -3,7 +3,7 @@ import NotesSidebar from './notes-sidebar';
 
 export default function NotesLayout() {
   return (
-    <div className="w-full h-full flex xl:w-[64rem] xl:h-[45rem] overflow-hidden">
+    <div className="w-full h-full flex xl:w-[64rem] xl:h-[45rem] p-2 overflow-hidden">
       <NotesSidebar />
       <NotesMain />
     </div>

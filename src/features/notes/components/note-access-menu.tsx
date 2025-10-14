@@ -47,7 +47,7 @@ export default function NoteAccessMenu({ disabled }: { disabled: boolean }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
           className={clsx(
-            'absolute bg-zinc-900 border border-zinc-800 -left-14 rounded-md z-20 shadow-xl grid'
+            'absolute bg-[#1b1b1b] border border-zinc-800 -left-14 rounded-md z-20 shadow-xl grid'
           )}
         >
           {options.map((option) => (

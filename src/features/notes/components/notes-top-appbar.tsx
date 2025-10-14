@@ -14,7 +14,7 @@ export default function NotesTopAppbar() {
   const handleChangeTitle = (text: string) => changeTitle(currentNote.id, text);
 
   return (
-    <div className="sticky top-0 bg-zinc-900/30 flex items-center justify-between md:hidden">
+    <div className="sticky top-0 bg-[#1b1b1b] flex items-center justify-between md:hidden">
       <button title="Sidebar" className="p-4" type="button" onClick={toggleExpandSidebar}>
         <MenuIcon className="w-5" />
       </button>

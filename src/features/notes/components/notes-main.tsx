@@ -11,7 +11,7 @@ export default function NotesMain() {
   const [isLocking] = useAtom(lockingStateAtom);
 
   return (
-    <main className="bg-zinc-800 flex flex-col relative flex-grow overflow-hidden shadow-lg xl:rounded-md">
+    <main className="bg-[#1b1b1b] flex flex-col relative flex-grow overflow-hidden shadow-lg rounded-md">
       <NotesTopAppbar />
       {note.type === 'encrypted' && <NoteUnlock note={note} />}
       {note.type !== 'encrypted' && isLocking && <NoteLock note={note} />}

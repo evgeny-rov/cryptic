@@ -55,7 +55,7 @@ export default function NoteLock({ note }: { note: EditableNote }) {
       animate={{ opacity: 1 }}
       className="absolute inset-0"
     >
-      <div className="h-full z-30 grid items-center overflow-y-auto p-8 bg-zinc-800/95">
+      <div className="h-full z-30 grid items-center overflow-y-auto p-8 bg-[#1b1b1b]">
         <button
           title="Close Lock Popover"
           className="absolute top-4 right-4 w-6 p-2"

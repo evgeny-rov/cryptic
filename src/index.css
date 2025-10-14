@@ -13,9 +13,11 @@
     overscroll-behavior: contain;
   }
 
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: #86868a;
+  @supports not selector(::-webkit-scrollbar) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #86868a;
+    }
   }
 
   ::-webkit-scrollbar {

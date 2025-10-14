@@ -25,13 +25,12 @@ const NoteListItem = ({
   return (
     <li
       onClick={selectNote}
+      role="button"
       className={clsx(
-        'relative rounded-md text-zinc-400 hover:text-current',
-        isSelected && 'text-current bg-zinc-800'
+        'relative rounded-md text-zinc-400 hover:text-current duration-150',
+        isSelected ? 'text-current bg-[#1b1b1b]' : "bg-transparent"
       )}
     >
-      <button className="absolute inset-[2px] rounded-md" />
-
       <div className="relative flex pl-2 space-x-1 transition-colors">
         <div className="relative w-3 grid place-items-center text-md text-center">
           {note.type === 'plain' && <span>{'•'}</span>}
@@ -42,7 +41,8 @@ const NoteListItem = ({
           value={note.title}
           onChange={handleChangeTitle}
           placeholder={derivePlaceholderTitle(note)}
-          disabled={!isSelected || note.type === 'encrypted'}
+          disabled={note.type === 'encrypted'}
+          isSelected={isSelected}
         />
       </div>
     </li>

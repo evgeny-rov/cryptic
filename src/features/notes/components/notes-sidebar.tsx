@@ -14,18 +14,18 @@ export default function NotesSidebar() {
     <div
       ref={containerRef}
       className={clsx(
-        'bg-zinc-800/30 w-60 flex-shrink-0 flex flex-col',
+        'w-60 flex-shrink-0 flex flex-col',
         !isExpanded && 'hidden',
-        'md:flex xl:mr-1 xl:rounded-md xl:border-2 xl:border-zinc-800'
+        'md:flex'
       )}
     >
-      <div className="flex py-2 justify-evenly">
+      <div className="flex justify-evenly">
         <NotesTools />
       </div>
       <div
         className={clsx(
-          'px-2 overflow-y-auto app-scrollbar',
-          'supports-gutter:gutter-both supports-gutter:px-1'
+          'overflow-y-auto app-scrollbar',
+          'supports-gutter:gutter supports-gutter:pr-1'
         )}
       >
         <NotesList />
