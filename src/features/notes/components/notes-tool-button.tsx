@@ -16,7 +16,7 @@ export default function ToolButton({
       type="button"
       disabled={disabled}
       className={clsx(
-        'py-3 px-2 flex items-center text-zinc-400',
+        'py-3 px-2 flex items-center text-zinc-400 bg-[#1b1b1b] rounded-md grow justify-center',
         'hover:text-current focus:text-current disabled:text-zinc-700'
       )}
       title={title}

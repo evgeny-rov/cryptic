@@ -27,8 +27,8 @@ const NoteListItem = ({
       onClick={selectNote}
       role="button"
       className={clsx(
-        'relative rounded-md text-zinc-400 hover:text-current duration-150',
-        isSelected ? 'text-current bg-[#1b1b1b]' : "bg-transparent"
+        'relative rounded-md text-zinc-400 hover:text-current',
+        isSelected ? 'text-current bg-[#1b1b1b]' : ""
       )}
     >
       <div className="relative flex pl-2 space-x-1 transition-colors">

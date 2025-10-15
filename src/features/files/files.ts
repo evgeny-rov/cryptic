@@ -1,11 +1,11 @@
 export const readFiles = async (files: FileList) =>
   Promise.all([...files].map((file) => file.text()));
 
-export const promptImport = (): Promise<FileList> => {
+export const promptImport = (multiple = false): Promise<FileList> => {
   return new Promise((res, rej) => {
     const fileInputElement = document.createElement('input');
     fileInputElement.setAttribute('type', 'file');
-    fileInputElement.setAttribute('multiple', 'true');
+    fileInputElement.setAttribute('multiple', multiple ? 'true' : 'false');
     fileInputElement.setAttribute('accept', '.cryptic');
 
     fileInputElement.addEventListener('change', async function (ev) {

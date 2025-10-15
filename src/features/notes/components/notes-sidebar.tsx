@@ -13,15 +13,9 @@ export default function NotesSidebar() {
   return (
     <div
       ref={containerRef}
-      className={clsx(
-        'w-60 flex-shrink-0 flex flex-col',
-        !isExpanded && 'hidden',
-        'md:flex'
-      )}
+      className={clsx('w-60 flex-shrink-0 flex flex-col gap-2', !isExpanded && 'hidden', 'md:flex')}
     >
-      <div className="flex justify-evenly">
-        <NotesTools />
-      </div>
+      <NotesTools />
       <div
         className={clsx(
           'overflow-y-auto app-scrollbar',
