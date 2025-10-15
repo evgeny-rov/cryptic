@@ -45,11 +45,13 @@ export type Note = PlainNote | UnlockedNote | EncryptedNote;
 export type EditableNote = PlainNote | UnlockedNote;
 export type ExternalNote = RemoveNameField<PlainNote | EncryptedNote, 'id'>;
 
-interface NotesState {
+export interface BaseState {
   allIds: NoteId[];
   byId: Record<NoteId, Note>;
   selectedNoteId: NoteId;
+}
 
+interface NotesState extends BaseState {
   createNewNote: () => void;
   selectNote: (id: NoteId) => void;
   changeNoteText: (id: NoteId, text: string) => void;
@@ -62,6 +64,8 @@ interface NotesState {
   removeLock: (note: UnlockedNote) => void;
 
   importNotes: (notes: ExternalNote[]) => void;
+  importStore: (state: BaseState) => void;
+  exportStore: () => Promise<string>;
 }
 
 const createPlainNote = (): PlainNote => ({
@@ -79,6 +83,10 @@ const createDefaultState = () => {
     byId: { [placeholderNote.id]: placeholderNote },
     selectedNoteId: placeholderNote.id,
   };
+};
+
+export const isPristineNote = (note: Note) => {
+  return note.type === 'plain' && note.title === '' && note.data === '';
 };
 
 const persistConfig: PersistOptions<NotesState> = {
@@ -115,13 +123,26 @@ export const useNotesStore = create<NotesState>()(
       ...createDefaultState(),
 
       createNewNote: () => {
-        const newNote = createPlainNote();
+        const state = get();
 
-        set((state) => ({
-          allIds: [newNote.id, ...state.allIds],
-          byId: { ...state.byId, [newNote.id]: newNote },
-          selectedNoteId: newNote.id,
-        }));
+        const firstNoteId = state.allIds[0];
+        const firstNote = state.byId[firstNoteId];
+
+        const isPristine = firstNote ? isPristineNote(firstNote) : false;
+
+        if (isPristine) {
+          set(() => ({
+            selectedNoteId: firstNoteId,
+          }));
+        } else {
+          const newNote = createPlainNote();
+
+          set((state) => ({
+            allIds: [newNote.id, ...state.allIds],
+            byId: { ...state.byId, [newNote.id]: newNote },
+            selectedNoteId: newNote.id,
+          }));
+        }
       },
       selectNote: (id) => set((state) => ({ ...state, selectedNoteId: id })),
       changeNoteText: (id, text) => {
@@ -200,6 +221,25 @@ export const useNotesStore = create<NotesState>()(
           byId: isPristine ? zippedById : { ...state.byId, ...zippedById },
           selectedNoteId: ids[0],
         }));
+      },
+      exportStore: async () => {
+        const state = get();
+
+        const serialized = await persistConfig.serialize!({
+          state,
+          version: persistConfig.version,
+        });
+
+        return serialized;
+      },
+      importStore: async (data: BaseState) => {
+        console.log(data);
+        try {
+          set(() => data);
+        } catch (err) {
+          console.error('Failed to import store:', err);
+          throw new Error('Failed to import store data');
+        }
       },
     }),
     persistConfig

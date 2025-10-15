@@ -5,12 +5,9 @@ export default (note: Note) => {
     return 'Untitled Note';
   }
 
-  const slice = note.data.slice(0, 100);
-  const lines = slice.split('\n');
-  const firstNonEmptyLine = lines.find((line) => line.trim().length > 0);
+  const slice = note.data.trim().slice(0, 100).replaceAll('\n', ' ');
 
-  if (firstNonEmptyLine) return firstNonEmptyLine;
-  else if (slice.trim().length > 0) return slice;
+  if (slice) return slice;
 
   return 'Untitled Note';
 };
